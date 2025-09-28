@@ -809,7 +809,8 @@
 
         // Default GitHub URLs for Excel files
         const defaultGitHubUrls = {
-            complete: 'https://github.com/mohamedsillahkanu/health-facility-database/raw/4cf88f957adda1b255de8fc040626f6a8e9007f4/regions_template.xlsx'
+            complete: 'https://github.com/mohamedsillahkanu/health-facility-database/raw/main/regions_template.xlsx',
+            corsProxy: 'https://corsproxy.io/?https://github.com/mohamedsillahkanu/health-facility-database/raw/main/regions_template.xlsx'
         };
 
         // GitHub file handling
@@ -862,7 +863,7 @@
             XLSX.utils.book_append_sheet(wb, surveillanceWS, 'Surveillance');
             
             // Download the file
-            XLSX.writeFile(wb, 'regions_template.xlsx');
+            XLSX.writeFile(wb, 'sierra_leone_health_facilities_template.xlsx');
             
             const status = document.getElementById('loadStatus');
             status.textContent = 'Template downloaded! Fill it with your data and upload to GitHub, then provide the raw URL.';
@@ -876,8 +877,9 @@
             status.className = 'upload-status processing';
             
             try {
-                // Always use the embedded file URL
+                // Try the main branch URL first
                 const url = defaultGitHubUrls.complete;
+                console.log('Attempting to load from:', url);
                 
                 const workbook = await fetchExcelFromGitHub(url);
                 
@@ -931,18 +933,60 @@
                 console.error('Error loading from GitHub:', error);
                 status.textContent = `Error: ${error.message}`;
                 status.className = 'upload-status error';
+                
+                // Show fallback message
+                const grid = document.getElementById('regionsGrid');
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <p style="color: #f85149; margin-bottom: 15px;">Failed to load data from GitHub</p>
+                        <p style="margin-bottom: 10px;">Possible solutions:</p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>Check if the file exists: <a href="${defaultGitHubUrls.complete}" target="_blank" style="color: #58a6ff;">Open file</a></li>
+                            <li>Ensure the repository is public</li>
+                            <li>Try refreshing the page</li>
+                            <li>Check your internet connection</li>
+                        </ul>
+                        <p style="margin-top: 15px; font-size: 12px; color: #8b949e;">Error: ${error.message}</p>
+                    </div>
+                `;
             }
         }
 
         async function fetchExcelFromGitHub(url) {
-            const response = await fetch(url);
+            // Try multiple methods to fetch the file
+            const methods = [
+                { name: 'Direct', url: url },
+                { name: 'CORS Proxy', url: `https://corsproxy.io/?${encodeURIComponent(url)}` },
+                { name: 'Alternative Proxy', url: `https://cors-anywhere.herokuapp.com/${url}` }
+            ];
             
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText} - Check if the URL is correct and the file exists`);
+            for (const method of methods) {
+                try {
+                    console.log(`Trying ${method.name}: ${method.url}`);
+                    
+                    const response = await fetch(method.url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        },
+                        mode: 'cors'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const arrayBuffer = await response.arrayBuffer();
+                    console.log(`Successfully fetched file using ${method.name}, size: ${arrayBuffer.byteLength} bytes`);
+                    return XLSX.read(arrayBuffer, { type: 'array' });
+                    
+                } catch (error) {
+                    console.warn(`${method.name} failed:`, error.message);
+                    if (method === methods[methods.length - 1]) {
+                        throw new Error(`All fetch methods failed. Last error: ${error.message}. Please check: 1) File exists at URL, 2) File is publicly accessible, 3) Network connection is working`);
+                    }
+                }
             }
-            
-            const arrayBuffer = await response.arrayBuffer();
-            return XLSX.read(arrayBuffer, { type: 'array' });
         }
 
         function processRegionsWorkbook(workbook, sheetName) {
