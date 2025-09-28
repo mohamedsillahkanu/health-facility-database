@@ -768,12 +768,14 @@
         <!-- Excel Dashboard Section -->
         <div id="excel-dashboard" class="section-hidden">
             <div class="file-upload">
-                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-area" onclick="readExcelFile()">
                     <div class="upload-icon">📊</div>
-                    <div class="upload-text">Upload Excel File for 2023 Health Data</div>
-                    <div class="upload-subtext">Click here or drag and drop your Excel file (.xlsx, .xls)</div>
+                    <div class="upload-text">Load Excel Data for 2023 Health Analytics</div>
+                    <div class="upload-subtext">Click here to read Excel file from local directory</div>
                 </div>
-                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;" />
+                <div style="margin-top: 15px; color: #8b949e; font-size: 12px;">
+                    Expected file: health_data.xlsx (must be in same directory as this HTML file)
+                </div>
             </div>
 
             <div class="excel-controls" id="excelControls" style="display: none;">
@@ -1040,51 +1042,105 @@ Wonde Chiefdom||Kambawama MCHP`;
 
         // Initialize Excel Dashboard Event Listeners
         function initializeExcelDashboard() {
-            const fileInput = document.getElementById('fileInput');
-            const uploadArea = document.querySelector('.upload-area');
             const variableSelect = document.getElementById('variableSelect');
             const thresholdInput = document.getElementById('thresholdInput');
             const hfFilter = document.getElementById('hfFilter');
 
-            if (!uploadArea) return;
-
-            // Drag and drop handling
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleExcelFile(files[0]);
-                }
-            });
-
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleExcelFile(e.target.files[0]);
-                }
-            });
-
             // Control event listeners
-            variableSelect.addEventListener('change', (e) => {
-                currentVariable = e.target.value;
-                updateExcelDisplay();
-            });
+            if (variableSelect) {
+                variableSelect.addEventListener('change', (e) => {
+                    currentVariable = e.target.value;
+                    updateExcelDisplay();
+                });
+            }
 
-            thresholdInput.addEventListener('input', (e) => {
-                currentThreshold = parseFloat(e.target.value) || 100;
-                updateExcelDisplay();
-            });
+            if (thresholdInput) {
+                thresholdInput.addEventListener('input', (e) => {
+                    currentThreshold = parseFloat(e.target.value) || 100;
+                    updateExcelDisplay();
+                });
+            }
 
-            hfFilter.addEventListener('change', updateExcelDisplay);
+            if (hfFilter) {
+                hfFilter.addEventListener('change', updateExcelDisplay);
+            }
+        }
+
+        function readExcelFile() {
+            showExcelLoading();
+            
+            // Try to read the Excel file using window.fs.readFile
+            const fileName = 'health_data.xlsx';
+            
+            if (typeof window.fs === 'undefined' || !window.fs.readFile) {
+                showExcelError('File system access not available. Please ensure you are running this in an environment that supports file reading.');
+                return;
+            }
+
+            window.fs.readFile(fileName)
+                .then(data => {
+                    try {
+                        // Process the Excel file
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        
+                        // Get the first worksheet
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        
+                        // Convert to JSON
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                        
+                        processExcelData(jsonData);
+                    } catch (error) {
+                        showExcelError('Error processing Excel file: ' + error.message);
+                    }
+                })
+                .catch(error => {
+                    // If file reading fails, offer to generate sample data
+                    showExcelError(`Could not read file "${fileName}". Click below to generate sample data for demonstration.`);
+                    
+                    // Add a button to generate sample data
+                    setTimeout(() => {
+                        const monthsContainer = document.getElementById('monthsContainer');
+                        monthsContainer.innerHTML = `
+                            <div class="error">
+                                Could not read file "${fileName}". 
+                                <br><br>
+                                <button onclick="generateSampleData()" style="background: #58a6ff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 10px;">
+                                    Generate Sample Data
+                                </button>
+                                <br><br>
+                                <small>To use your own data, place a file named "health_data.xlsx" in the same directory as this HTML file with columns: hf, month, year, allout, susp, conf</small>
+                            </div>
+                        `;
+                    }, 100);
+                });
+        }
+
+        function generateSampleData() {
+            showExcelLoading();
+            
+            // Generate sample health facility data for 2023
+            const sampleHFs = ['Bo Hospital', 'Kenema CHC', 'Makeni Hospital', 'Freetown CHC', 'Koidu Hospital'];
+            const sampleData = [];
+            
+            // Add headers
+            sampleData.push(['hf', 'month', 'year', 'allout', 'susp', 'conf']);
+            
+            // Generate data for each month and health facility
+            months.forEach(month => {
+                sampleHFs.forEach(hf => {
+                    const allout = Math.floor(Math.random() * 80) + 20; // 20-100
+                    const susp = Math.floor(Math.random() * 50) + 10;   // 10-60
+                    const conf = Math.floor(Math.random() * 30) + 5;    // 5-35
+                    
+                    sampleData.push([hf, month, 2023, allout, susp, conf]);
+                });
+            });
+            
+            setTimeout(() => {
+                processExcelData(sampleData);
+            }, 1000);
         }
 
         function showExcelDashboard() {
@@ -1102,35 +1158,6 @@ Wonde Chiefdom||Kambawama MCHP`;
             
             // Initialize Excel dashboard if not already done
             setTimeout(initializeExcelDashboard, 100);
-        }
-
-        function handleExcelFile(file) {
-            if (!file.name.match(/\.(xlsx|xls)$/)) {
-                showExcelError('Please select a valid Excel file (.xlsx or .xls)');
-                return;
-            }
-
-            showExcelLoading();
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // Get the first worksheet
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    // Convert to JSON
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    
-                    processExcelData(jsonData);
-                } catch (error) {
-                    showExcelError('Error reading Excel file: ' + error.message);
-                }
-            };
-            reader.readAsArrayBuffer(file);
         }
 
         function processExcelData(rawData) {
