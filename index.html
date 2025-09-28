@@ -742,7 +742,7 @@
             <button class="back-button" onclick="showChiefdoms()">← Back to Chiefdoms</button>
             <div class="facilities-grid" id="facilitiesGrid">
                 <!-- Health facilities will be populated by JavaScript -->
-            </div>    
+            </div>
         </div>
 
         <!-- Facility Dashboard Section -->
@@ -809,23 +809,26 @@
             surveillance: null
         };
 
-        // Default GitHub URLs for Excel files (replace with your actual repository URLs)
+        // Default GitHub URLs for Excel files
         const defaultGitHubUrls = {
-            complete: 'https://raw.githubusercontent.com/your-username/your-repo/main/data/health_facilities_data.xlsx'
+            complete: 'https://github.com/mohamedsillahkanu/health-facility-database/raw/4cf88f957adda1b255de8fc040626f6a8e9007f4/regions_template.xlsx'
         };
 
         // GitHub file handling
         function initializeDataManagement() {
             const loadGitHubBtn = document.getElementById('loadGitHubBtn');
             const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+            const githubInput = document.getElementById('githubUrlInput');
+            
+            // Pre-fill with your GitHub URL
+            githubInput.value = defaultGitHubUrls.complete;
+            githubInput.placeholder = "GitHub raw file URL (your file is already loaded)";
             
             loadGitHubBtn.addEventListener('click', loadDataFromGitHub);
             downloadTemplateBtn.addEventListener('click', downloadExcelTemplate);
             
-            // Show message about needing data
-            const status = document.getElementById('loadStatus');
-            status.textContent = 'Please provide a GitHub URL to load data, or download the template to see the expected format.';
-            status.className = 'upload-status';
+            // Auto-load your data on page load
+            loadDataFromGitHub();
         }
 
         function downloadExcelTemplate() {
@@ -881,10 +884,8 @@
             status.className = 'upload-status processing';
             
             try {
+                // Use your embedded file URL or custom URL
                 const url = customUrl || defaultGitHubUrls.complete;
-                if (!url || url === defaultGitHubUrls.complete) {
-                    throw new Error('Please provide a valid GitHub raw file URL in the input field');
-                }
                 
                 const workbook = await fetchExcelFromGitHub(url);
                 
@@ -1691,15 +1692,15 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize data management
+            // Initialize data management - this will auto-load your data
             initializeDataManagement();
             
-            // Start with empty data - all will be loaded from Excel
+            // Start with empty data initially
             calculateStats();
             
-            // Show empty state message
+            // Show loading message
             const grid = document.getElementById('regionsGrid');
-            grid.innerHTML = '<div class="no-results">No data loaded. Please provide a GitHub URL to load your Excel data, or download the template to see the expected format.</div>';
+            grid.innerHTML = '<div class="no-results">Loading data from GitHub...</div>';
         });
     </script>
 </body>
