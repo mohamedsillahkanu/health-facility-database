@@ -995,11 +995,24 @@ Wonde Chiefdom||Kambawama MCHP`;
             "Western Area": ["Western Area Urban District", "Western Area Rural District"]
         };
 
-        // Chiefdoms data (shortened for space - full data available)
+        // Chiefdoms data (complete data)
         const chiefdomsData = {
-            "Bo District": ["Bo City", "Badjia Chiefdom", "Bagbwe Chiefdom", "Baoma Chiefdom"],
-            "Bombali District": ["Biriwa Chiefdom", "Bombali Sebora Chiefdom", "Makeni City"]
-            // ... (rest of chiefdoms data)
+            "Bo District": ["Bo City", "Badjia Chiefdom", "Bagbwe Chiefdom", "Baoma Chiefdom", "Bargbo Chiefdom", "Bongor Chiefdom", "Bumpe Ngao Chiefdom", "Gbo Chiefdom", "Jaiama Chiefdom", "Kakua Chiefdom", "Komboya Chiefdom", "Lugbu Chiefdom", "Niawa Lenga Chiefdom", "Selenga Chiefdom", "Tikonko Chiefdom", "Valunia Chiefdom", "Wonde Chiefdom"],
+            "Bombali District": ["Biriwa Chiefdom", "Bombali Sebora Chiefdom", "Bombali Serry Chiefdom", "Gbanti (Bombali) Chiefdom", "Gbendembu Chiefdom", "Kamaranka Chiefdom", "Magbaimba Ndohahun Chiefdom", "Makarie Chiefdom", "Mara Chiefdom", "Ngowahun Chiefdom", "Paki Masabong Chiefdom", "Safroko Limba Chiefdom", "Makeni City"],
+            "Bonthe District": ["Bendu-Cha Chiefdom", "Bum Chiefdom", "Dema Chiefdom", "Imperi Chiefdom", "Jong Chiefdom", "Kpanda Kemoh Chiefdom", "Kwamebai Krim Chiefdom", "Nongoba Bullom Chiefdom", "Sittia Chiefdom", "Sogbini Chiefdom", "Yawbeko Chiefdom", "Bonthe Town"],
+            "Falaba District": ["Barawa Wollay Chiefdom", "Delmandugu Chiefdom", "Dembelia-Sinkunia Chiefdom", "Folosaba Dembelia Chiefdom", "Folosaba Kamba Chiefdom", "Kabelia Chiefdom", "Kamadugu Yiraia Chiefdom", "Kulor Saradu Chiefdom", "Mongo Chiefdom", "Morifindu Chiefdom", "Neya Chiefdom", "Nyedu Chiefdom", "Sulima Chiefdom"],
+            "Kailahun District": ["Dea Chiefdom", "Jahn Chiefdom", "Jawei Chiefdom", "Kissi Kama Chiefdom", "Kissi Teng Chiefdom", "Kissi Tongi Chiefdom", "Luawa Chiefdom", "Malema Chiefdom", "Mandu Chiefdom", "Njaluahun Chiefdom", "Peje Bongre Chiefdom", "Peje West Chiefdom", "Penguia Chiefdom", "Upper Bambara Chiefdom", "Yawei Chiefdom"],
+            "Kambia District": ["Bramaia Chiefdom", "Dixon Chiefdom", "Gbinleh Chiefdom", "Konimaka Chiefdom", "Magbema Chiefdom", "Mambolo Chiefdom", "Masumgbala Chiefdom", "Munu Thalla Chiefdom", "Samu Chiefdom", "Tonko Limba Chiefdom"],
+            "Karene District": ["Buya Chiefdom", "Dibia Chiefdom", "Gbanti (Karene) Chiefdom", "Gormbahun Chiefdom", "Mafonda Makerembay Chiefdom", "Romende Chiefdom", "Safroko Chiefdom", "Sanda Loko Chiefdom", "Sanda Magbolonthor Chiefdom", "Sanda Tendaren Chiefdom", "Sella Limba Chiefdom", "Tambaka Simibungie Chiefdom", "Tambaka Yobangie Chiefdom"],
+            "Kenema District": ["Kenema City", "Dama Chiefdom", "Dodo Chiefdom", "Gaura Chiefdom", "Gorama Mende Chiefdom", "Kandu Leppiama Chiefdom", "Koya (Kenema) Chiefdom", "Langroma Chiefdom", "Lower Bambara Chiefdom", "Malegohun Chiefdom", "Niawa Chiefdom", "Nomo Chiefdom", "Nongowa Chiefdom", "Simbaru Chiefdom", "Small Bo Chiefdom", "Tunkia Chiefdom", "Wandor Chiefdom"],
+            "Koinadugu District": ["Diang Chiefdom", "Gbonkorbor Kayaka Chiefdom", "Kallian Chiefdom", "Kamukeh Chiefdom", "Kasunko Kakellay Chiefdom", "Nieni Chiefdom", "Sengbeh Chiefdom", "Thamiso Chiefdom", "Wara Wara Bafodia Chiefdom", "Wara Wara Yagala Chiefdom"],
+            "Kono District": ["Koidu New Sembehun City", "Fiama Chiefdom", "Gbane Chiefdom", "Gbane Kandor Chiefdom", "Gbense Chiefdom", "Gorama Kono Chiefdom", "Kamara Chiefdom", "Lei Chiefdom", "Mafindor Chiefdom", "Nimikoro Chiefdom", "Nimiyama Chiefdom", "Sandor Chiefdom", "Soa Chiefdom", "Tankoro Chiefdom", "Toli Chiefdom"],
+            "Moyamba District": ["Bagruwa Chiefdom", "Bumpeh Chiefdom", "Dasse Chiefdom", "Fakunya Chiefdom", "Kaiyamba Chiefdom", "Kamajei Chiefdom", "Kargboro Chiefdom", "Kongbora Chiefdom", "Kori Chiefdom", "Kowa Chiefdom", "Lower Banta Chiefdom", "Ribbi Chiefdom", "Timdale Chiefdom", "Upper Banta Chiefdom"],
+            "Port Loko District": ["Port Loko City", "Bake-Loko Chiefdom", "Bureh Chiefdom", "Kaffu Bullom Chiefdom", "Kamasondo Chiefdom", "Kasseh Chiefdom", "Koya (Port Loko) Chiefdom", "Lokomasama Chiefdom", "Maconteh Chiefdom", "Maforki Chiefdom", "Makama Chiefdom", "Marampa Chiefdom", "Masimera Chiefdom", "Tainkatopa Chiefdom"],
+            "Pujehun District": ["Barri Chiefdom", "Galliness Chiefdom", "Kabonde Chiefdom", "Kpaka Chiefdom", "Kpanga Chiefdom", "Kpanga Krim Chiefdom", "Makpele Chiefdom", "Malen Chiefdom", "Mano Sakrim Chiefdom", "Peje Chiefdom", "Perri Chiefdom", "Soro Gbeima Chiefdom", "Sowa Chiefdom", "Yakemoh Kpukumu Krim Chiefdom"],
+            "Tonkolili District": ["Dansogoia Chiefdom", "Gbokolenken Masankong Chiefdom", "Gbokolenken Mayeppoh Chiefdom", "Gbokolenken Polie Chiefdom", "Gbokolenken Yele Chiefdom", "Kafe Chiefdom", "Kalantuba Chiefdom", "Kholifa Mabang Chiefdom", "Kholifa Mamuntha Chiefdom", "Kholifa Rowalla Chiefdom", "Kunike Barina Chiefdom", "Kunike Fulawusu Chiefdom", "Kunike Sanda Chiefdom", "Malal Chiefdom", "Sambaya Bendugu Chiefdom", "Simiria Chiefdom", "Tane Chiefdom", "Yoni Mabanta Chiefdom", "Yoni Mamala Chiefdom"],
+            "Western Area Rural District": ["Koya Rural Zone", "Mountain Rural Zone", "Waterloo Rural Zone", "York Rural Zone"],
+            "Western Area Urban District": ["Central 1 Zone", "Central 2 Zone", "East 1 Zone", "East 2 Zone", "East 3 Zone", "West 1 Zone", "West 2 Zone", "West 3 Zone"]
         };
 
         // Excel Dashboard Variables
@@ -1508,8 +1521,19 @@ Wonde Chiefdom||Kambawama MCHP`;
             
             Object.keys(regionsData).forEach(regionName => {
                 const districts = regionsData[regionName];
-                let totalChiefdoms = districts.length * 5; // Approximate
-                let totalFacilities = districts.length * 50; // Approximate
+                let totalChiefdoms = 0;
+                let totalFacilities = 0;
+                
+                districts.forEach(district => {
+                    if (chiefdomsData[district]) {
+                        totalChiefdoms += chiefdomsData[district].length;
+                        chiefdomsData[district].forEach(chiefdom => {
+                            if (healthFacilitiesData[chiefdom]) {
+                                totalFacilities += healthFacilitiesData[chiefdom].length;
+                            }
+                        });
+                    }
+                });
                 
                 const card = document.createElement('div');
                 card.className = 'region-card fade-in';
@@ -1541,6 +1565,226 @@ Wonde Chiefdom||Kambawama MCHP`;
                         </div>
                     </div>
                     <div class="click-hint">Click to view districts</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function showDistricts(regionName = null) {
+            if (regionName) {
+                currentRegion = regionName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.remove('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('excel-dashboard').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
+            
+            currentDistrict = null;
+            currentChiefdom = null;
+            updateBreadcrumb();
+            renderDistricts();
+        }
+
+        function renderDistricts() {
+            const grid = document.getElementById('districtsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentRegion) return;
+            
+            const districts = regionsData[currentRegion];
+            
+            districts.forEach(districtName => {
+                const chiefdoms = chiefdomsData[districtName] || [];
+                let totalFacilities = 0;
+                
+                chiefdoms.forEach(chiefdom => {
+                    if (healthFacilitiesData[chiefdom]) {
+                        totalFacilities += healthFacilitiesData[chiefdom].length;
+                    }
+                });
+                
+                const card = document.createElement('div');
+                card.className = 'district-card fade-in';
+                card.onclick = () => showChiefdoms(districtName);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${districtName}</div>
+                            <div class="card-type">District</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${totalFacilities}</div>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="summary-item">
+                            <span class="summary-number">${chiefdoms.length}</span>
+                            <span class="summary-label">Chiefdoms</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalFacilities}</span>
+                            <span class="summary-label">Facilities</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to view chiefdoms/zones</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function showChiefdoms(districtName = null) {
+            if (districtName) {
+                currentDistrict = districtName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.remove('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('excel-dashboard').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
+            
+            currentChiefdom = null;
+            updateBreadcrumb();
+            renderChiefdoms();
+        }
+
+        function renderChiefdoms() {
+            const grid = document.getElementById('chiefdomsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentDistrict) return;
+            
+            const chiefdoms = chiefdomsData[currentDistrict] || [];
+            
+            chiefdoms.forEach(chiefdomName => {
+                const facilities = healthFacilitiesData[chiefdomName] || [];
+                
+                const card = document.createElement('div');
+                card.className = 'chiefdom-card fade-in';
+                
+                if (facilities.length > 0) {
+                    card.style.cursor = 'pointer';
+                    card.onclick = () => showFacilities(chiefdomName);
+                }
+                
+                const isCity = chiefdomName.includes('City') || chiefdomName.includes('Town') || chiefdomName.includes('Zone');
+                const type = isCity ? (chiefdomName.includes('Zone') ? 'Zone' : 'City/Town') : 'Chiefdom';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${chiefdomName}</div>
+                            <div class="card-type">${type}</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${facilities.length}</div>
+                        </div>
+                    </div>
+                    ${facilities.length > 0 ? 
+                        `<div class="card-summary">
+                            <div class="summary-item">
+                                <span class="summary-number">${facilities.length}</span>
+                                <span class="summary-label">Facilities</span>
+                            </div>
+                        </div>
+                        <div class="click-hint">Click to view health facilities</div>` : 
+                        '<div class="click-hint" style="color: #6e7681;">No health facility data available</div>'
+                    }
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function showFacilities(chiefdomName) {
+            currentChiefdom = chiefdomName;
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.remove('section-hidden');
+            document.getElementById('excel-dashboard').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'block';
+            
+            updateBreadcrumb();
+            setupSearch();
+            renderFacilities();
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            searchInput.addEventListener('input', performSearch);
+            
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.type;
+                    performSearch();
+                });
+            });
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const facilities = healthFacilitiesData[currentChiefdom] || [];
+            
+            filteredFacilities = facilities.filter(facility => {
+                const matchesSearch = facility.name.toLowerCase().includes(searchTerm) ||
+                                    facility.inCharge.toLowerCase().includes(searchTerm);
+                const matchesFilter = currentFilter === 'all' || facility.type === currentFilter;
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderFacilities();
+        }
+
+        function renderFacilities() {
+            const grid = document.getElementById('facilitiesGrid');
+            grid.innerHTML = '';
+            
+            if (!currentChiefdom) return;
+            
+            const facilities = filteredFacilities.length > 0 ? filteredFacilities : (healthFacilitiesData[currentChiefdom] || []);
+            
+            if (facilities.length === 0) {
+                grid.innerHTML = '<div class="no-results">No health facilities match your search criteria.</div>';
+                return;
+            }
+            
+            facilities.forEach(facility => {
+                const facilityTypeInfo = facilityTypes[facility.type] || { color: "#8b949e", description: "Health facility" };
+                
+                const card = document.createElement('div');
+                card.className = 'facility-card fade-in';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${facility.name}</div>
+                            <div class="card-type" style="color: ${facilityTypeInfo.color}">${facility.type}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 5px;">PHU IN-CHARGE</div>
+                        <div style="color: #e6edf3; font-weight: 600; margin-bottom: 8px;">${facility.inCharge}</div>
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 3px;">CONTACT</div>
+                        <div style="color: #58a6ff; font-weight: 500;">${facility.contact}</div>
+                    </div>
+                    <div style="background: rgba(88, 166, 255, 0.1); padding: 8px; border-radius: 4px; border-left: 3px solid ${facilityTypeInfo.color};">
+                        <div style="color: #e6edf3; font-size: 13px;">${facilityTypeInfo.description}</div>
+                    </div>
                 `;
                 
                 grid.appendChild(card);
