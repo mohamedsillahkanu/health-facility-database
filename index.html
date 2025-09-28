@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sierra Leone Administrative Structure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 18px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .breadcrumb-item {
+            color: #58a6ff;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .breadcrumb-item.active {
+            color: #e6edf3;
+            background: rgba(88, 166, 255, 0.2);
+        }
+
+        .breadcrumb-separator {
+            color: #8b949e;
+        }
+
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .chiefdoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .facilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .region-card, .district-card, .chiefdom-card, .facility-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .region-card:hover, .district-card:hover, .chiefdom-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(88, 166, 255, 0.15);
+            border-color: #58a6ff;
+        }
+
+        .region-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #238636, #2ea043, #58a6ff);
+        }
+
+        .district-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0ad4e, #d58512);
+        }
+
+        .chiefdom-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #58a6ff, #7c3aed);
+        }
+
+        .facility-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 5px;
+        }
+
+        .district-card .card-name {
+            font-size: 18px;
+        }
+
+        .chiefdom-card .card-name {
+            font-size: 16px;
+        }
+
+        .facility-card .card-name {
+            font-size: 15px;
+        }
+
+        .card-type {
+            color: #8b949e;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .card-stats {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .stats-label {
+            color: #8b949e;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .stats-value {
+            color: #58a6ff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .card-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .summary-number {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+
+        .region-card .summary-number {
+            color: #2ea043;
+        }
+
+        .district-card .summary-number {
+            color: #f0ad4e;
+        }
+
+        .summary-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        .click-hint {
+            text-align: center;
+            color: #8b949e;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            background: transparent;
+            color: #58a6ff;
+            border: 1px solid #30363d;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .section-hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .regions-grid, .districts-grid, .chiefdoms-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .breadcrumb {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Sierra Leone Administrative Structure</h1>
+            <p class="subtitle">Navigate through regions, districts, and chiefdoms</p>
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item active" onclick="showRegions()">Regions</span>
+        </div>
+
+        <!-- Regions Section -->
+        <div id="regions-section">
+            <div class="regions-grid" id="regionsGrid">
+                <!-- Regions will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Districts Section -->
+        <div id="districts-section" class="section-hidden">
+            <button class="back-button" onclick="showRegions()">← Back to Regions</button>
+            <div class="districts-grid" id="districtsGrid">
+                <!-- Districts will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Chiefdoms Section -->
+        <div id="chiefdoms-section" class="section-hidden">
+            <button class="back-button" onclick="showDistricts()">← Back to Districts</button>
+            <div class="chiefdoms-grid" id="chiefdomsGrid">
+                <!-- Chiefdoms will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Health Facilities Section -->
+        <div id="facilities-section" class="section-hidden">
+            <button class="back-button" onclick="showChiefdoms()">← Back to Chiefdoms</button>
+            <div class="facilities-grid" id="facilitiesGrid">
+                <!-- Health facilities will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure based on your documents
+        const regionsData = {
+            "Eastern Region": ["Kailahun District", "Kenema District", "Kono District"],
+            "Northern Region": ["Bombali District", "Falaba District", "Koinadugu District", "Tonkolili District"],
+            "North West Region": ["Kambia District", "Karene District", "Port Loko District"],
+            "Southern Region": ["Bo District", "Bonthe District", "Moyamba District", "Pujehun District"],
+            "Western Area": ["Western Area Urban District", "Western Area Rural District"]
+        };
+
+        // Chiefdoms data (sample from your documents)
+        const chiefdomsData = {
+            "Bo District": ["Bo City", "Badjia Chiefdom", "Bagbwe Chiefdom", "Baoma Chiefdom", "Bargbo Chiefdom", "Bongor Chiefdom", "Bumpe Ngao Chiefdom", "Gbo Chiefdom", "Jaiama Chiefdom", "Kakua Chiefdom", "Komboya Chiefdom", "Lugbu Chiefdom", "Niawa Lenga Chiefdom", "Selenga Chiefdom", "Tikonko Chiefdom", "Valunia Chiefdom", "Wonde Chiefdom"],
+            "Bombali District": ["Biriwa Chiefdom", "Bombali Sebora Chiefdom", "Bombali Serry Chiefdom", "Gbanti (Bombali) Chiefdom", "Gbendembu Chiefdom", "Kamaranka Chiefdom", "Magbaimba Ndohahun Chiefdom", "Makarie Chiefdom", "Mara Chiefdom", "Ngowahun Chiefdom", "Paki Masabong Chiefdom", "Safroko Limba Chiefdom", "Makeni City"],
+            "Bonthe District": ["Bendu-Cha Chiefdom", "Bum Chiefdom", "Dema Chiefdom", "Imperi Chiefdom", "Jong Chiefdom", "Kpanda Kemoh Chiefdom", "Kwamebai Krim Chiefdom", "Nongoba Bullom Chiefdom", "Sittia Chiefdom", "Sogbini Chiefdom", "Yawbeko Chiefdom", "Bonthe Town"],
+            "Falaba District": ["Barawa Wollay Chiefdom", "Delmandugu Chiefdom", "Dembelia-Sinkunia Chiefdom", "Folosaba Dembelia Chiefdom", "Folosaba Kamba Chiefdom", "Kabelia Chiefdom", "Kamadugu Yiraia Chiefdom", "Kulor Saradu Chiefdom", "Mongo Chiefdom", "Morifindu Chiefdom", "Neya Chiefdom", "Nyedu Chiefdom", "Sulima Chiefdom"],
+            "Kailahun District": ["Dea Chiefdom", "Jahn Chiefdom", "Jawei Chiefdom", "Kissi Kama Chiefdom", "Kissi Teng Chiefdom", "Kissi Tongi Chiefdom", "Luawa Chiefdom", "Malema Chiefdom", "Mandu Chiefdom", "Njaluahun Chiefdom", "Peje Bongre Chiefdom", "Peje West Chiefdom", "Penguia Chiefdom", "Upper Bambara Chiefdom", "Yawei Chiefdom"],
+            "Kambia District": ["Bramaia Chiefdom", "Dixon Chiefdom", "Gbinleh Chiefdom", "Konimaka Chiefdom", "Magbema Chiefdom", "Mambolo Chiefdom", "Masumgbala Chiefdom", "Munu Thalla Chiefdom", "Samu Chiefdom", "Tonko Limba Chiefdom"],
+            "Karene District": ["Buya Chiefdom", "Dibia Chiefdom", "Gbanti (Karene) Chiefdom", "Gormbahun Chiefdom", "Mafonda Makerembay Chiefdom", "Romende Chiefdom", "Safroko Chiefdom", "Sanda Loko Chiefdom", "Sanda Magbolonthor Chiefdom", "Sanda Tendaren Chiefdom", "Sella Limba Chiefdom", "Tambaka Simibungie Chiefdom", "Tambaka Yobangie Chiefdom"],
+            "Kenema District": ["Kenema City", "Dama Chiefdom", "Dodo Chiefdom", "Gaura Chiefdom", "Gorama Mende Chiefdom", "Kandu Leppiama Chiefdom", "Koya (Kenema) Chiefdom", "Langroma Chiefdom", "Lower Bambara Chiefdom", "Malegohun Chiefdom", "Niawa Chiefdom", "Nomo Chiefdom", "Nongowa Chiefdom", "Simbaru Chiefdom", "Small Bo Chiefdom", "Tunkia Chiefdom", "Wandor Chiefdom"],
+            "Koinadugu District": ["Diang Chiefdom", "Gbonkorbor Kayaka Chiefdom", "Kallian Chiefdom", "Kamukeh Chiefdom", "Kasunko Kakellay Chiefdom", "Nieni Chiefdom", "Sengbeh Chiefdom", "Thamiso Chiefdom", "Wara Wara Bafodia Chiefdom", "Wara Wara Yagala Chiefdom"],
+            "Kono District": ["Koidu New Sembehun City", "Fiama Chiefdom", "Gbane Chiefdom", "Gbane Kandor Chiefdom", "Gbense Chiefdom", "Gorama Kono Chiefdom", "Kamara Chiefdom", "Lei Chiefdom", "Mafindor Chiefdom", "Nimikoro Chiefdom", "Nimiyama Chiefdom", "Sandor Chiefdom", "Soa Chiefdom", "Tankoro Chiefdom", "Toli Chiefdom"],
+            "Moyamba District": ["Bagruwa Chiefdom", "Bumpeh Chiefdom", "Dasse Chiefdom", "Fakunya Chiefdom", "Kaiyamba Chiefdom", "Kamajei Chiefdom", "Kargboro Chiefdom", "Kongbora Chiefdom", "Kori Chiefdom", "Kowa Chiefdom", "Lower Banta Chiefdom", "Ribbi Chiefdom", "Timdale Chiefdom", "Upper Banta Chiefdom"],
+            "Port Loko District": ["Port Loko City", "Bake-Loko Chiefdom", "Bureh Chiefdom", "Kaffu Bullom Chiefdom", "Kamasondo Chiefdom", "Kasseh Chiefdom", "Koya (Port Loko) Chiefdom", "Lokomasama Chiefdom", "Maconteh Chiefdom", "Maforki Chiefdom", "Makama Chiefdom", "Marampa Chiefdom", "Masimera Chiefdom", "Tainkatopa Chiefdom"],
+            "Pujehun District": ["Barri Chiefdom", "Galliness Chiefdom", "Kabonde Chiefdom", "Kpaka Chiefdom", "Kpanga Chiefdom", "Kpanga Krim Chiefdom", "Makpele Chiefdom", "Malen Chiefdom", "Mano Sakrim Chiefdom", "Peje Chiefdom", "Perri Chiefdom", "Soro Gbeima Chiefdom", "Sowa Chiefdom", "Yakemoh Kpukumu Krim Chiefdom"],
+            "Tonkolili District": ["Dansogoia Chiefdom", "Gbokolenken Masankong Chiefdom", "Gbokolenken Mayeppoh Chiefdom", "Gbokolenken Polie Chiefdom", "Gbokolenken Yele Chiefdom", "Kafe Chiefdom", "Kalantuba Chiefdom", "Kholifa Mabang Chiefdom", "Kholifa Mamuntha Chiefdom", "Kholifa Rowalla Chiefdom", "Kunike Barina Chiefdom", "Kunike Fulawusu Chiefdom", "Kunike Sanda Chiefdom", "Malal Chiefdom", "Sambaya Bendugu Chiefdom", "Simiria Chiefdom", "Tane Chiefdom", "Yoni Mabanta Chiefdom", "Yoni Mamala Chiefdom"],
+            "Western Area Rural District": ["Koya Rural Zone", "Mountain Rural Zone", "Waterloo Rural Zone", "York Rural Zone"],
+            "Western Area Urban District": ["Central 1 Zone", "Central 2 Zone", "East 1 Zone", "East 2 Zone", "East 3 Zone", "West 1 Zone", "West 2 Zone", "West 3 Zone"]
+        };
+
+        // Health facilities data with PHU details (comprehensive data from documents)
+        const healthFacilitiesData = {
+            "Bo City": [
+                { name: "Bo Government Hospital", type: "Hospital", inCharge: "Dr. Mohamed Kamara", contact: "+232 76 654321", level: "Tertiary" },
+                { name: "Mercy Ships (Bo City) Hospital", type: "Hospital", inCharge: "Dr. Sarah Johnson", contact: "+232 78 987654", level: "Secondary" },
+                { name: "Kindoya Hospital", type: "Hospital", inCharge: "Dr. Ibrahim Sesay", contact: "+232 77 123456", level: "Secondary" },
+                { name: "Gilas Hospital", type: "Hospital", inCharge: "Dr. Fatmata Bangura", contact: "+232 76 789012", level: "Secondary" },
+                { name: "Bo Childrens Hospital", type: "Hospital", inCharge: "Dr. Mamadu Jalloh", contact: "+232 78 456789", level: "Secondary" },
+                { name: "Mamasa Life Saving Hospital", type: "Hospital", inCharge: "Dr. Adama Conteh", contact: "+232 77 234567", level: "Secondary" },
+                { name: "Manjiama CHC", type: "CHC", inCharge: "Nurse Mary Koroma", contact: "+232 78 345678", level: "Primary" },
+                { name: "New Police Barracks CHC", type: "CHC", inCharge: "Nurse James Conteh", contact: "+232 77 901234", level: "Primary" },
+                { name: "Red Cross (Bo City) CHC", type: "CHC", inCharge: "Nurse Adama Fofana", contact: "+232 76 567890", level: "Primary" },
+                { name: "Yemoh Town CHC", type: "CHC", inCharge: "Nurse Aminata Turay", contact: "+232 78 234567", level: "Primary" },
+                { name: "Praise Foundation CHC", type: "CHC", inCharge: "Nurse Abdul Kargbo", contact: "+232 77 678901", level: "Primary" },
+                { name: "Kakua Static CHC", type: "CHC", inCharge: "Nurse Isatu Bangura", contact: "+232 76 345789", level: "Primary" }
+            ],
+            "Makeni City": [
+                { name: "Makeni Government Hospital", type: "Hospital", inCharge: "Dr. Abu Bakarr Sesay", contact: "+232 76 111222", level: "Tertiary" },
+                { name: "Holy Spirit Hospital", type: "Hospital", inCharge: "Sr. Margaret O'Brien", contact: "+232 78 333444", level: "Secondary" },
+                { name: "New Hope Hospital", type: "Hospital", inCharge: "Dr. Mohamed Turay", contact: "+232 77 555666", level: "Secondary" },
+                { name: "Branda Medical Centre Hospital", type: "Hospital", inCharge: "Dr. Isata Kamara", contact: "+232 76 777888", level: "Secondary" },
+                { name: "Stocco Leprosy and TB Hospital", type: "Hospital", inCharge: "Dr. Alpha Conteh", contact: "+232 78 999111", level: "Specialized" },
+                { name: "Bombali Police CHC", type: "CHC", inCharge: "Nurse Alpha Conteh", contact: "+232 78 999000", level: "Primary" },
+                { name: "Red Cross (Makeni City) CHP", type: "CHP", inCharge: "CHW Saidu Bangura", contact: "+232 77 111333", level: "Primary" },
+                { name: "Teko Barracks CHP", type: "CHP", inCharge: "CHW Mariama Koroma", contact: "+232 76 444555", level: "Primary" }
+            ],
+            "Kenema City": [
+                { name: "Kenema Government Hospital", type: "Hospital", inCharge: "Dr. Sorie Conteh", contact: "+232 76 222333", level: "Tertiary" },
+                { name: "Ahmadiyya Muslim (Nongowa) Hospital", type: "Hospital", inCharge: "Dr. Hassan Bangura", contact: "+232 78 444555", level: "Secondary" },
+                { name: "Malian Friendship Hospital", type: "Hospital", inCharge: "Dr. Ousmane Traore", contact: "+232 77 666777", level: "Secondary" },
+                { name: "Gbo-Lambayama 1 CHC", type: "CHC", inCharge: "Nurse Kadiatu Sesay", contact: "+232 76 888999", level: "Primary" },
+                { name: "Samai Town CHC", type: "CHC", inCharge: "Nurse Mohamed Kargbo", contact: "+232 78 111000", level: "Primary" },
+                { name: "Kpetema (Kenema City) CHC", type: "CHC", inCharge: "Nurse Fatmata Turay", contact: "+232 77 333222", level: "Primary" }
+            ],
+            "Koidu New Sembehun City": [
+                { name: "Koidu Government Hospital", type: "Hospital", inCharge: "Dr. Siaka Sesay", contact: "+232 76 333444", level: "Tertiary" },
+                { name: "Hussein Mackie Memorial Hospital", type: "Hospital", inCharge: "Dr. Musa Kamara", contact: "+232 78 555666", level: "Secondary" },
+                { name: "Paul Sorie Farma's Hospital", type: "Hospital", inCharge: "Dr. Paul Farma", contact: "+232 77 777888", level: "Secondary" },
+                { name: "Koidu Static CHC", type: "CHC", inCharge: "Nurse Alpha Bangura", contact: "+232 76 999000", level: "Primary" },
+                { name: "Koakoyima CHC", type: "CHC", inCharge: "Nurse Memuna Conteh", contact: "+232 78 222111", level: "Primary" },
+                { name: "Kimbadu CHC", type: "CHC", inCharge: "Nurse Ibrahim Kargbo", contact: "+232 77 444333", level: "Primary" }
+            ],
+            "Port Loko City": [
+                { name: "Port Loko Government Hospital", type: "Hospital", inCharge: "Dr. Mohamed Bangura", contact: "+232 76 444555", level: "Tertiary" },
+                { name: "Ernest Bai Koroma University (EBK-PL) Clinic", type: "Clinic", inCharge: "Dr. Fatmata Kargbo", contact: "+232 78 666777", level: "Secondary" },
+                { name: "Port Loko Under Fives CHP", type: "CHP", inCharge: "CHW Adama Sesay", contact: "+232 77 888999", level: "Primary" }
+            ],
+            "Bonthe Town": [
+                { name: "Bonthe Government Hospital", type: "Hospital", inCharge: "Dr. Alie Kamara", contact: "+232 76 555666", level: "Secondary" },
+                { name: "Red Cross (Bonthe) CHP", type: "CHP", inCharge: "CHW Kadiatu Bangura", contact: "+232 78 777888", level: "Primary" },
+                { name: "St Joseph's Clinic", type: "Clinic", inCharge: "Sr. Mary Catherine", contact: "+232 77 999000", level: "Primary" },
+                { name: "York Island CHP", type: "CHP", inCharge: "CHW Mohamed Turay", contact: "+232 76 111222", level: "Primary" }
+            ],
+            "Badjia Chiefdom": [
+                { name: "Ngelehun (Badjia) CHC", type: "CHC", inCharge: "Nurse Abdulai Kamara", contact: "+232 78 666777", level: "Primary" },
+                { name: "Njagbahun (Badjia) MCHP", type: "MCHP", inCharge: "TBA Kadiatu Sesay", contact: "+232 77 888999", level: "Primary" },
+                { name: "Njandama MCHP", type: "MCHP", inCharge: "TBA Fatmata Conteh", contact: "+232 76 000111", level: "Primary" }
+            ],
+            "Bagbwe Chiefdom": [
+                { name: "Ngalu CHC", type: "CHC", inCharge: "Nurse Ibrahim Sesay", contact: "+232 78 777000", level: "Primary" },
+                { name: "Barlie MCHP", type: "MCHP", inCharge: "TBA Memuna Kamara", contact: "+232 77 999111", level: "Primary" },
+                { name: "Benduma (Bagbwe) MCHP", type: "MCHP", inCharge: "TBA Adama Bangura", contact: "+232 76 222333", level: "Primary" },
+                { name: "Kondiama MCHP", type: "MCHP", inCharge: "TBA Mariama Conteh", contact: "+232 78 444555", level: "Primary" }
+            ],
+            "Biriwa Chiefdom": [
+                { name: "Kamabai CHC", type: "CHC", inCharge: "Nurse Alpha Kargbo", contact: "+232 77 666888", level: "Primary" },
+                { name: "Kagbaneh CHC", type: "CHC", inCharge: "Nurse Fatmata Turay", contact: "+232 76 777999", level: "Primary" },
+                { name: "Bumban CHP", type: "CHP", inCharge: "CHW Mohamed Sesay", contact: "+232 78 888000", level: "Primary" },
+                { name: "Kamasikie CHP", type: "CHP", inCharge: "CHW Isatu Bangura", contact: "+232 77 111333", level: "Primary" }
+            ]
+        };
+
+        // PHU facility type definitions
+        const facilityTypes = {
+            "Hospital": { color: "#f85149", description: "Tertiary/Secondary care facility" },
+            "CHC": { color: "#f0ad4e", description: "Community Health Centre" },
+            "CHP": { color: "#58a6ff", description: "Community Health Post" },
+            "MCHP": { color: "#2ea043", description: "Maternal & Child Health Post" },
+            "Clinic": { color: "#7c3aed", description: "Private/Specialized clinic" }
+        };
+
+        let currentRegion = null;
+        let currentDistrict = null;
+        let currentChiefdom = null;
+
+        function showRegions() {
+            document.getElementById('regions-section').classList.remove('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            
+            currentRegion = null;
+            currentDistrict = null;
+            currentChiefdom = null;
+            updateBreadcrumb();
+            renderRegions();
+        }
+
+        function showDistricts(regionName = null) {
+            if (regionName) {
+                currentRegion = regionName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.remove('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            
+            currentDistrict = null;
+            currentChiefdom = null;
+            updateBreadcrumb();
+            renderDistricts();
+        }
+
+        function showChiefdoms(districtName = null) {
+            if (districtName) {
+                currentDistrict = districtName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.remove('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            
+            currentChiefdom = null;
+            updateBreadcrumb();
+            renderChiefdoms();
+        }
+
+        function showFacilities(chiefdomName) {
+            currentChiefdom = chiefdomName;
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.remove('section-hidden');
+            
+            updateBreadcrumb();
+            renderFacilities();
+        }
+
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            let html = '<span class="breadcrumb-item' + (!currentRegion ? ' active' : '') + '" onclick="showRegions()">Regions</span>';
+            
+            if (currentRegion) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item' + (!currentDistrict ? ' active' : '') + '" onclick="showDistricts()">' + currentRegion + '</span>';
+            }
+            
+            if (currentDistrict) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item' + (!currentChiefdom ? ' active' : '') + '" onclick="showChiefdoms()">' + currentDistrict + '</span>';
+            }
+
+            if (currentChiefdom) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item active">' + currentChiefdom + '</span>';
+            }
+            
+            breadcrumb.innerHTML = html;
+        }
+
+        function renderRegions() {
+            const grid = document.getElementById('regionsGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(regionsData).forEach(regionName => {
+                const districts = regionsData[regionName];
+                let totalChiefdoms = 0;
+                
+                districts.forEach(district => {
+                    if (chiefdomsData[district]) {
+                        totalChiefdoms += chiefdomsData[district].length;
+                    }
+                });
+                
+                const card = document.createElement('div');
+                card.className = 'region-card fade-in';
+                card.onclick = () => showDistricts(regionName);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${regionName}</div>
+                            <div class="card-type">Region</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Administrative Units</span>
+                            <div class="stats-value">${districts.length + totalChiefdoms}</div>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="summary-item">
+                            <span class="summary-number">${districts.length}</span>
+                            <span class="summary-label">Districts</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalChiefdoms}</span>
+                            <span class="summary-label">Chiefdoms/Zones</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to view districts</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderDistricts() {
+            const grid = document.getElementById('districtsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentRegion) return;
+            
+            const districts = regionsData[currentRegion];
+            
+            districts.forEach(districtName => {
+                const chiefdoms = chiefdomsData[districtName] || [];
+                
+                const card = document.createElement('div');
+                card.className = 'district-card fade-in';
+                card.onclick = () => showChiefdoms(districtName);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${districtName}</div>
+                            <div class="card-type">District</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Chiefdoms</span>
+                            <div class="stats-value">${chiefdoms.length}</div>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="summary-item">
+                            <span class="summary-number">${chiefdoms.length}</span>
+                            <span class="summary-label">Administrative Units</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to view chiefdoms/zones</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderChiefdoms() {
+            const grid = document.getElementById('chiefdomsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentDistrict) return;
+            
+            const chiefdoms = chiefdomsData[currentDistrict] || [];
+            
+            chiefdoms.forEach(chiefdomName => {
+                const facilities = healthFacilitiesData[chiefdomName] || [];
+                
+                const card = document.createElement('div');
+                card.className = 'chiefdom-card fade-in';
+                
+                if (facilities.length > 0) {
+                    card.style.cursor = 'pointer';
+                    card.onclick = () => showFacilities(chiefdomName);
+                }
+                
+                const isCity = chiefdomName.includes('City') || chiefdomName.includes('Town') || chiefdomName.includes('Zone');
+                const type = isCity ? (chiefdomName.includes('Zone') ? 'Zone' : 'City/Town') : 'Chiefdom';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${chiefdomName}</div>
+                            <div class="card-type">${type}</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${facilities.length}</div>
+                        </div>
+                    </div>
+                    ${facilities.length > 0 ? 
+                        `<div class="card-summary">
+                            <div class="summary-item">
+                                <span class="summary-number">${facilities.length}</span>
+                                <span class="summary-label">Facilities</span>
+                            </div>
+                        </div>
+                        <div class="click-hint">Click to view health facilities</div>` : 
+                        '<div class="click-hint" style="color: #6e7681;">No health facility data available</div>'
+                    }
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFacilities() {
+            const grid = document.getElementById('facilitiesGrid');
+            grid.innerHTML = '';
+            
+            if (!currentChiefdom) return;
+            
+            const facilities = healthFacilitiesData[currentChiefdom] || [];
+            
+            facilities.forEach(facility => {
+                const facilityTypeInfo = facilityTypes[facility.type] || { color: "#8b949e", description: "Health facility" };
+                
+                const card = document.createElement('div');
+                card.className = 'facility-card fade-in';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${facility.name}</div>
+                            <div class="card-type" style="color: ${facilityTypeInfo.color}">${facility.type} - ${facility.level}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 5px;">PHU IN-CHARGE</div>
+                        <div style="color: #e6edf3; font-weight: 600; margin-bottom: 8px;">${facility.inCharge}</div>
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 3px;">CONTACT</div>
+                        <div style="color: #58a6ff; font-weight: 500;">${facility.contact}</div>
+                    </div>
+                    <div style="background: rgba(88, 166, 255, 0.1); padding: 8px; border-radius: 4px; border-left: 3px solid ${facilityTypeInfo.color};">
+                        <div style="color: #e6edf3; font-size: 13px;">${facilityTypeInfo.description}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+            
+            if (facilities.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #8b949e; font-style: italic; padding: 40px;">No health facility data available for this area.</div>';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showRegions();
+        });
+    </script>
+</body>
+</html>
