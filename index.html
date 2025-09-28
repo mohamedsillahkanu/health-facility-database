@@ -284,10 +284,10 @@
         }
 
         .indicator-name {
-            font-size: 12px;
+            font-size: 14px;
             color: #8b949e;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 3px;
         }
 
@@ -302,15 +302,16 @@
         }
 
         .threshold-label {
-            font-size: 10px;
+            font-size: 14px;
             color: #8b949e;
             text-transform: uppercase;
+            font-weight: 700;
             margin-bottom: 3px;
         }
 
         .threshold-value {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: #f0ad4e;
         }
 
@@ -319,15 +320,16 @@
         }
 
         .issue-label {
-            font-size: 10px;
+            font-size: 14px;
             color: #8b949e;
             text-transform: uppercase;
+            font-weight: 700;
             margin-bottom: 3px;
         }
 
         .issue-status {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             padding: 4px 8px;
             border-radius: 4px;
         }
@@ -349,109 +351,53 @@
         .indicator-row[data-type="treat"] .indicator-value { color: #2ea043; }
         .indicator-row[data-type="pres"] .indicator-value { color: #ec4899; }
 
-        .data-management {
-            background: rgba(13, 17, 23, 0.6);
-            border: 1px solid #30363d;
+        .alerts-summary {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid #f85149;
             border-radius: 8px;
             padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .alerts-summary h3 {
+            color: #f85149;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
             text-align: center;
         }
 
-        .upload-btn, .download-btn {
-            background: #238636;
-            color: white;
-            border: none;
-            padding: 12px 20px;
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(248, 81, 73, 0.05);
+            padding: 12px;
             border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            margin: 0 10px;
-            transition: all 0.2s ease;
+            border-left: 3px solid #f85149;
         }
 
-        .download-btn {
-            background: #58a6ff;
-        }
-
-        .upload-btn:hover {
-            background: #2ea043;
-        }
-
-        .download-btn:hover {
-            background: #1f6feb;
-        }
-
-        .github-input {
-            background: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 8px 12px;
-            color: #e6edf3;
-            font-size: 14px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .github-input:focus {
-            outline: none;
-            border-color: #58a6ff;
-        }
-
-        .github-input::placeholder {
-            color: #6e7681;
-        }
-
-        .upload-status {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .upload-status.success {
-            color: #2ea043;
-        }
-
-        .upload-status.error {
-            color: #f85149;
-        }
-
-        .upload-status.processing {
-            color: #f0ad4e;
-        }
-
-        .upload-help {
-            background: rgba(88, 166, 255, 0.1);
-            border-left: 3px solid #58a6ff;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 0 6px 6px 0;
-            text-align: left;
-        }
-
-        .upload-help p {
-            margin-bottom: 10px;
+        .alert-indicator {
+            font-weight: 700;
             color: #e6edf3;
         }
 
-        .upload-help ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .upload-help li {
-            margin-bottom: 8px;
+        .alert-details {
+            font-size: 14px;
             color: #8b949e;
-            padding-left: 20px;
-            position: relative;
         }
 
-        .upload-help li::before {
-            content: "•";
-            color: #58a6ff;
-            position: absolute;
-            left: 0;
+        .no-alerts {
+            text-align: center;
+            color: #2ea043;
+            font-weight: 600;
+            padding: 20px;
         }
 
         .region-card, .district-card, .chiefdom-card, .facility-card {
@@ -678,15 +624,17 @@
             }
 
             .malaria-indicators {
-                grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 8px;
             }
 
-            .indicator-item {
+            .indicator-row {
                 padding: 8px;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                text-align: center;
             }
 
-            .indicator-value {
+            .indicator-value, .threshold-value, .issue-status {
                 font-size: 18px;
             }
         }
@@ -711,8 +659,6 @@
             </div>
             <h1 class="title">Sierra Leone Health Facilities & Malaria Surveillance</h1>
             <p class="subtitle">Comprehensive database of PHUs with integrated malaria surveillance monitoring</p>
-            
-
         </div>
 
         <div class="stats-bar" id="statsBar">
@@ -819,6 +765,14 @@
                 </div>
             </div>
 
+            <!-- Alerts Summary Section -->
+            <div id="alertsSummary" class="alerts-summary" style="display: none;">
+                <h3>⚠️ SURVEILLANCE ALERTS</h3>
+                <div id="alertsList" class="alerts-list">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+
             <div class="malaria-cards-grid" id="malariaCardsGrid">
                 <!-- Malaria surveillance cards will be populated by JavaScript -->
             </div>
@@ -858,115 +812,38 @@
         }
 
         function downloadExcelTemplate() {
-            // Create sample data for the Excel template
-            const regionsData = [
-                { Region: 'Eastern Region', District: 'Kailahun District', Chiefdom: 'Luawa Chiefdom' },
-                { Region: 'Eastern Region', District: 'Kailahun District', Chiefdom: 'Jawei Chiefdom' },
-                { Region: 'Eastern Region', District: 'Kenema District', Chiefdom: 'Nongowa Chiefdom' },
-                { Region: 'Southern Region', District: 'Bo District', Chiefdom: 'Bo City' },
-                { Region: 'Southern Region', District: 'Bo District', Chiefdom: 'Kakua Chiefdom' }
-            ];
-
-            const facilitiesData = [
-                { Location: 'Luawa Chiefdom', Facility: 'Kailahun Government Hospital', Type: 'Hospital', InCharge: 'Dr. Mohamed Kamara', Contact: '+232 76123456' },
-                { Location: 'Luawa Chiefdom', Facility: 'Luawa Under Fives CHC', Type: 'CHC', InCharge: 'Nurse Mary Sesay', Contact: '+232 77234567' },
-                { Location: 'Bo City', Facility: 'Bo Government Hospital', Type: 'Hospital', InCharge: 'Dr. Fatmata Bangura', Contact: '+232 78345678' },
-                { Location: 'Bo City', Facility: 'Kakua Static CHC', Type: 'CHC', InCharge: 'Nurse James Conteh', Contact: '+232 76456789' },
-                { Location: 'Nongowa Chiefdom', Facility: 'Hangah CHC', Type: 'CHC', InCharge: 'CHW Saidu Turay', Contact: '+232 77567890' }
-            ];
-
-            const surveillanceData = [
-                { 
-                    Facility: 'Kailahun Government Hospital', 
-                    Year: 2024, 
-                    Month: 'January', 
-                    AllOut: 850, 
-                    Suspected: 210, 
-                    Tested: 180, 
-                    Confirmed: 95, 
-                    Treated: 105, 
-                    Presumed: 10,
-                    ThresholdAllOut: 500,
-                    ThresholdSuspected: 100,
-                    ThresholdTested: 80,
-                    ThresholdConfirmed: 50,
-                    ThresholdTreated: 60,
-                    ThresholdPresumed: 20
-                },
-                { 
-                    Facility: 'Kailahun Government Hospital', 
-                    Year: 2024, 
-                    Month: 'February', 
-                    AllOut: 790, 
-                    Suspected: 195, 
-                    Tested: 170, 
-                    Confirmed: 88, 
-                    Treated: 98, 
-                    Presumed: 10,
-                    ThresholdAllOut: 500,
-                    ThresholdSuspected: 100,
-                    ThresholdTested: 80,
-                    ThresholdConfirmed: 50,
-                    ThresholdTreated: 60,
-                    ThresholdPresumed: 20
-                },
-                { 
-                    Facility: 'Bo Government Hospital', 
-                    Year: 2024, 
-                    Month: 'January', 
-                    AllOut: 1200, 
-                    Suspected: 320, 
-                    Tested: 280, 
-                    Confirmed: 165, 
-                    Treated: 175, 
-                    Presumed: 10,
-                    ThresholdAllOut: 800,
-                    ThresholdSuspected: 150,
-                    ThresholdTested: 120,
-                    ThresholdConfirmed: 80,
-                    ThresholdTreated: 90,
-                    ThresholdPresumed: 25
-                },
-                { 
-                    Facility: 'Luawa Under Fives CHC', 
-                    Year: 2024, 
-                    Month: 'January', 
-                    AllOut: 280, 
-                    Suspected: 75, 
-                    Tested: 65, 
-                    Confirmed: 35, 
-                    Treated: 40, 
-                    Presumed: 5,
-                    ThresholdAllOut: 200,
-                    ThresholdSuspected: 50,
-                    ThresholdTested: 40,
-                    ThresholdConfirmed: 25,
-                    ThresholdTreated: 30,
-                    ThresholdPresumed: 10
-                }
-            ];
-
-            // Create workbook
+            // Create workbook with empty structure
             const wb = XLSX.utils.book_new();
             
-            // Add sheets
-            const regionsWS = XLSX.utils.json_to_sheet(regionsData);
-            const facilitiesWS = XLSX.utils.json_to_sheet(facilitiesData);
-            const surveillanceWS = XLSX.utils.json_to_sheet(surveillanceData);
+            // Add empty sheets with headers only
+            const regionsWS = XLSX.utils.json_to_sheet([{ Region: '', District: '', Chiefdom: '' }]);
+            const facilitiesWS = XLSX.utils.json_to_sheet([{ Location: '', Facility: '', Type: '', InCharge: '', Contact: '' }]);
+            const surveillanceWS = XLSX.utils.json_to_sheet([{ 
+                Facility: '', 
+                Year: '', 
+                Month: '', 
+                AllOut: '', 
+                Suspected: '', 
+                Tested: '', 
+                Confirmed: '', 
+                Treated: '', 
+                Presumed: '',
+                ThresholdAllOut: '',
+                ThresholdSuspected: '',
+                ThresholdTested: '',
+                ThresholdConfirmed: '',
+                ThresholdTreated: '',
+                ThresholdPresumed: ''
+            }]);
             
             XLSX.utils.book_append_sheet(wb, regionsWS, 'Regions');
             XLSX.utils.book_append_sheet(wb, facilitiesWS, 'Facilities');
             XLSX.utils.book_append_sheet(wb, surveillanceWS, 'Surveillance');
             
-            // Download the file
             XLSX.writeFile(wb, 'sierra_leone_health_facilities_template.xlsx');
-            
-            console.log('Template downloaded with threshold columns included');
         }
 
         async function loadDataFromGitHub() {
-            const status = document.getElementById('loadStatus');
-            
             // Show initial loading message
             document.getElementById('regionsGrid').innerHTML = '<div class="no-results">Loading data from GitHub...</div>';
             
@@ -1343,17 +1220,17 @@
         // Malaria surveillance indicators with thresholds
         const malariaIndicators = {
             allout: { 
-                label: "All Outpatients", 
+                label: "Outpatients", 
                 description: "Total outpatient consultations",
                 threshold: 500
             },
             susp: { 
-                label: "Suspected Malaria", 
+                label: "Suspected", 
                 description: "Cases with suspected malaria",
                 threshold: 100
             },
             test: { 
-                label: "Cases Tested", 
+                label: "Tested", 
                 description: "Cases tested for malaria",
                 threshold: 80
             },
@@ -1363,12 +1240,12 @@
                 threshold: 50
             },
             treat: { 
-                label: "Cases Treated", 
+                label: "Treated", 
                 description: "Cases treated for malaria",
                 threshold: 60
             },
             pres: { 
-                label: "Presumed Cases", 
+                label: "Presumed", 
                 description: "Presumed malaria cases",
                 threshold: 20
             }
@@ -1394,39 +1271,9 @@
             
             years.forEach(year => {
                 data[year] = {};
-                
                 months.forEach(month => {
-                    // Base numbers vary by facility type
-                    let baseAllout;
-                    switch(facilityType) {
-                        case 'Hospital': baseAllout = Math.floor(Math.random() * 1000) + 800; break;
-                        case 'CHC': baseAllout = Math.floor(Math.random() * 400) + 200; break;
-                        case 'CHP': baseAllout = Math.floor(Math.random() * 150) + 50; break;
-                        case 'MCHP': baseAllout = Math.floor(Math.random() * 100) + 30; break;
-                        default: baseAllout = Math.floor(Math.random() * 200) + 100;
-                    }
-                    
-                    // Seasonal variation (higher in rainy season)
-                    const isRainySeason = ['May', 'June', 'July', 'August', 'September', 'October'].includes(month);
-                    const seasonalMultiplier = isRainySeason ? 1.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
-                    
-                    // Year-over-year variation (2024 slightly higher due to population growth and improved reporting)
-                    const yearMultiplier = year === '2024' ? 1.05 + Math.random() * 0.1 : 0.95 + Math.random() * 0.1;
-                    
-                    const allout = Math.floor(baseAllout * seasonalMultiplier * yearMultiplier);
-                    const susp = Math.floor(allout * (0.15 + Math.random() * 0.25)); // 15-40% suspected
-                    const test = Math.floor(susp * (0.6 + Math.random() * 0.3)); // 60-90% tested
-                    const conf = Math.floor(test * (0.3 + Math.random() * 0.4)); // 30-70% confirmed
-                    const treat = Math.floor((conf + susp - test) * (0.8 + Math.random() * 0.2)); // 80-100% treated
-                    const pres = Math.max(0, treat - conf); // Presumed = treated - confirmed
-                    
                     data[year][month] = {
-                        allout,
-                        susp,
-                        test,
-                        conf,
-                        treat,
-                        pres,
+                        allout: 0, susp: 0, test: 0, conf: 0, treat: 0, pres: 0,
                         thresholds: facilityThresholds
                     };
                 });
@@ -1599,6 +1446,9 @@
             
             if (!yearData) return;
             
+            // Collect all alerts for the summary
+            let allAlerts = [];
+            
             monthsToShow.forEach(month => {
                 const monthData = yearData[month];
                 if (!monthData) return;
@@ -1612,6 +1462,16 @@
                     const value = monthData[key];
                     const threshold = monthData.thresholds ? monthData.thresholds[key] : indicator.threshold;
                     const isIssue = value > threshold;
+                    
+                    // Add to alerts if issue
+                    if (isIssue) {
+                        allAlerts.push({
+                            month: month,
+                            indicator: indicator.label,
+                            value: value,
+                            threshold: threshold
+                        });
+                    }
                     
                     indicatorsHTML += `
                         <div class="indicator-row" data-type="${key}">
@@ -1641,6 +1501,36 @@
                 `;
                 
                 grid.appendChild(card);
+            });
+            
+            // Update alerts summary
+            renderAlertsSummary(allAlerts);
+        }
+
+        function renderAlertsSummary(alerts) {
+            const alertsSummary = document.getElementById('alertsSummary');
+            const alertsList = document.getElementById('alertsList');
+            
+            if (alerts.length === 0) {
+                alertsSummary.style.display = 'none';
+                return;
+            }
+            
+            alertsSummary.style.display = 'block';
+            alertsList.innerHTML = '';
+            
+            alerts.forEach(alert => {
+                const alertItem = document.createElement('div');
+                alertItem.className = 'alert-item';
+                
+                alertItem.innerHTML = `
+                    <div class="alert-indicator">${alert.indicator} - ${alert.month}</div>
+                    <div class="alert-details">
+                        ${alert.value.toLocaleString()} exceeds threshold of ${alert.threshold.toLocaleString()}
+                    </div>
+                `;
+                
+                alertsList.appendChild(alertItem);
             });
         }
 
@@ -1744,6 +1634,10 @@
                     <div class="card-summary">
                         <div class="summary-item">
                             <span class="summary-number">${districts.length}</span>
+                            <span class="summary-label">Districts</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalChiefdoms}</span>
                             <span class="summary-label">Chiefdoms/Zones</span>
                         </div>
                         <div class="summary-item">
