@@ -1,4 +1,4 @@
-<!DOCTYPE html>             
+<!DOCTYPE html>         
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -848,7 +848,7 @@
         // Default GitHub URLs for Excel files
         const defaultGitHubUrls = {
             complete: 'https://github.com/mohamedsillahkanu/health-facility-database/raw/main/regions_template.xlsx',
-            corsProxy: 'https://corsproxy.io/?https://github.com/mohamedsillahkanu/health-facility-database/raw/main/regions_template.xlsx'
+            alternative: 'https://github.com/mohamedsillahkanu/health-facility-database/raw/main/health_facilities_data.xlsx'
         };
 
         // GitHub file handling
@@ -967,15 +967,40 @@
         async function loadDataFromGitHub() {
             const status = document.getElementById('loadStatus');
             
-            status.textContent = 'Loading Excel data from GitHub...';
-            status.className = 'upload-status processing';
+            // Show initial loading message
+            document.getElementById('regionsGrid').innerHTML = '<div class="no-results">Loading data from GitHub...</div>';
             
             try {
-                // Try the main branch URL first
-                const url = defaultGitHubUrls.complete;
-                console.log('Attempting to load from:', url);
+                // Try multiple URLs
+                const urlsToTry = [
+                    defaultGitHubUrls.complete,
+                    defaultGitHubUrls.alternative,
+                    'https://github.com/mohamedsillahkanu/health-facility-database/raw/main/sierra_leone_health_facilities_template.xlsx'
+                ];
                 
-                const workbook = await fetchExcelFromGitHub(url);
+                let workbook = null;
+                let successUrl = null;
+                
+                for (const url of urlsToTry) {
+                    try {
+                        console.log('Trying URL:', url);
+                        workbook = await fetchExcelFromGitHub(url);
+                        successUrl = url;
+                        break;
+                    } catch (error) {
+                        console.warn(`Failed to load from ${url}:`, error.message);
+                    }
+                }
+                
+                if (!workbook) {
+                    throw new Error(`Could not load Excel file from any URL. Please check: 
+                    1. File exists in GitHub repository
+                    2. Repository is public 
+                    3. File is named correctly (.xlsx)
+                    4. Network connection is working`);
+                }
+                
+                console.log('Successfully loaded from:', successUrl);
                 
                 // Process all available sheets
                 const sheetNames = workbook.SheetNames;
@@ -1017,30 +1042,38 @@
                     throw new Error(`No valid data sheets found. Available sheets: ${sheetNames.join(', ')}. Expected: Regions, Facilities, Surveillance`);
                 }
                 
-                status.textContent = `Successfully loaded data! Processed sheets: ${processedSheets.join(', ')}`;
-                status.className = 'upload-status success';
+                console.log(`Successfully loaded data! Processed sheets: ${processedSheets.join(', ')}`);
                 
                 // Refresh the dashboard with new data
                 refreshDashboard();
                 
             } catch (error) {
                 console.error('Error loading from GitHub:', error);
-                status.textContent = `Error: ${error.message}`;
-                status.className = 'upload-status error';
                 
-                // Show fallback message
+                // Show detailed error message
                 const grid = document.getElementById('regionsGrid');
                 grid.innerHTML = `
                     <div class="no-results">
-                        <p style="color: #f85149; margin-bottom: 15px;">Failed to load data from GitHub</p>
-                        <p style="margin-bottom: 10px;">Possible solutions:</p>
-                        <ul style="text-align: left; display: inline-block;">
-                            <li>Check if the file exists: <a href="${defaultGitHubUrls.complete}" target="_blank" style="color: #58a6ff;">Open file</a></li>
-                            <li>Ensure the repository is public</li>
-                            <li>Try refreshing the page</li>
-                            <li>Check your internet connection</li>
-                        </ul>
-                        <p style="margin-top: 15px; font-size: 12px; color: #8b949e;">Error: ${error.message}</p>
+                        <h3 style="color: #f85149; margin-bottom: 20px;">Failed to Load Data</h3>
+                        <p style="margin-bottom: 15px; color: #e6edf3;">The Excel file could not be loaded from GitHub.</p>
+                        
+                        <div style="text-align: left; display: inline-block; margin-bottom: 20px;">
+                            <p style="color: #8b949e; margin-bottom: 10px;"><strong>Troubleshooting Steps:</strong></p>
+                            <ol style="color: #8b949e; padding-left: 20px;">
+                                <li>Check if file exists: <a href="${defaultGitHubUrls.complete}" target="_blank" style="color: #58a6ff;">Click to test</a></li>
+                                <li>Ensure repository is public</li>
+                                <li>Verify file name is correct (.xlsx)</li>
+                                <li>Check network connection</li>
+                            </ol>
+                        </div>
+                        
+                        <div style="background: rgba(248, 81, 73, 0.1); padding: 15px; border-radius: 6px; border-left: 3px solid #f85149;">
+                            <p style="color: #f85149; font-size: 14px; margin: 0;"><strong>Error:</strong> ${error.message}</p>
+                        </div>
+                        
+                        <button onclick="loadDataFromGitHub()" style="margin-top: 20px; background: #58a6ff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                            Try Again
+                        </button>
                     </div>
                 `;
             }
@@ -1882,8 +1915,4 @@
         });
     </script>
 </body>
-</html>Districts</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-number">${totalChiefdoms}</span>
-                            <span class="summary-label">
+</html>
