@@ -1,4 +1,4 @@
-<!DOCTYPE html>            
+<!DOCTYPE html>         
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -661,20 +661,18 @@
             
             <!-- Data Management Section -->
             <div class="data-management" style="margin-top: 30px;">
-                <button id="loadGitHubBtn" class="upload-btn">🔄 Load Data from GitHub</button>
+                <button id="loadGitHubBtn" class="upload-btn">🔄 Refresh Data</button>
                 <button id="downloadTemplateBtn" class="download-btn">📄 Download Template</button>
-                <input type="text" id="githubUrlInput" class="github-input" placeholder="GitHub raw file URL (required)" style="margin: 10px;">
                 <span id="loadStatus" class="upload-status"></span>
                 
                 <div id="loadHelp" class="upload-help">
-                    <p>Load data directly from GitHub repositories. Provide the URL to your Excel file:</p>
+                    <p>This dashboard loads data directly from the embedded GitHub repository:</p>
                     <ul>
-                        <li><strong>Step 1:</strong> Download the template to see the required format</li>
-                        <li><strong>Step 2:</strong> Fill the Excel file with your data (3 sheets: Regions, Facilities, Surveillance)</li>
-                        <li><strong>Step 3:</strong> Upload to GitHub and get the raw file URL</li>
-                        <li><strong>Step 4:</strong> Paste the URL above and click "Load Data"</li>
+                        <li><strong>Auto-loading:</strong> Data loads automatically when the page opens</li>
+                        <li><strong>Refresh:</strong> Click "Refresh Data" to reload the latest data</li>
+                        <li><strong>Template:</strong> Download template to see the expected Excel format</li>
                     </ul>
-                    <p>Excel file should contain sheets named: <strong>Regions</strong>, <strong>Facilities</strong>, and <strong>Surveillance</strong></p>
+                    <p>Data source: <strong>Sierra Leone Health Facility Database</strong></p>
                 </div>
             </div>
         </div>
@@ -818,11 +816,6 @@
         function initializeDataManagement() {
             const loadGitHubBtn = document.getElementById('loadGitHubBtn');
             const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
-            const githubInput = document.getElementById('githubUrlInput');
-            
-            // Pre-fill with your GitHub URL
-            githubInput.value = defaultGitHubUrls.complete;
-            githubInput.placeholder = "GitHub raw file URL (your file is already loaded)";
             
             loadGitHubBtn.addEventListener('click', loadDataFromGitHub);
             downloadTemplateBtn.addEventListener('click', downloadExcelTemplate);
@@ -869,7 +862,7 @@
             XLSX.utils.book_append_sheet(wb, surveillanceWS, 'Surveillance');
             
             // Download the file
-            XLSX.writeFile(wb, 'sierra_leone_health_facilities_template.xlsx');
+            XLSX.writeFile(wb, 'regions_template.xlsx');
             
             const status = document.getElementById('loadStatus');
             status.textContent = 'Template downloaded! Fill it with your data and upload to GitHub, then provide the raw URL.';
@@ -878,14 +871,13 @@
 
         async function loadDataFromGitHub() {
             const status = document.getElementById('loadStatus');
-            const customUrl = document.getElementById('githubUrlInput').value.trim();
             
             status.textContent = 'Loading Excel data from GitHub...';
             status.className = 'upload-status processing';
             
             try {
-                // Use your embedded file URL or custom URL
-                const url = customUrl || defaultGitHubUrls.complete;
+                // Always use the embedded file URL
+                const url = defaultGitHubUrls.complete;
                 
                 const workbook = await fetchExcelFromGitHub(url);
                 
@@ -929,7 +921,7 @@
                     throw new Error(`No valid data sheets found. Available sheets: ${sheetNames.join(', ')}. Expected: Regions, Facilities, Surveillance`);
                 }
                 
-                status.textContent = `Successfully loaded Excel data! Processed sheets: ${processedSheets.join(', ')}`;
+                status.textContent = `Successfully loaded data! Processed sheets: ${processedSheets.join(', ')}`;
                 status.className = 'upload-status success';
                 
                 // Refresh the dashboard with new data
