@@ -262,25 +262,33 @@
         }
 
         .malaria-indicators {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .indicator-item {
-            text-align: center;
-            padding: 10px;
+        .indicator-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr;
+            gap: 15px;
+            align-items: center;
+            padding: 12px;
             background: rgba(13, 17, 23, 0.6);
             border-radius: 8px;
             border: 1px solid #30363d;
         }
 
-        .indicator-label {
-            font-size: 10px;
+        .indicator-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .indicator-name {
+            font-size: 12px;
             color: #8b949e;
             text-transform: uppercase;
-            margin-bottom: 5px;
             font-weight: 600;
+            margin-bottom: 3px;
         }
 
         .indicator-value {
@@ -289,12 +297,57 @@
             color: #e6edf3;
         }
 
-        .indicator-item[data-type="allout"] .indicator-value { color: #7c3aed; }
-        .indicator-item[data-type="susp"] .indicator-value { color: #f0ad4e; }
-        .indicator-item[data-type="test"] .indicator-value { color: #58a6ff; }
-        .indicator-item[data-type="conf"] .indicator-value { color: #f85149; }
-        .indicator-item[data-type="treat"] .indicator-value { color: #2ea043; }
-        .indicator-item[data-type="pres"] .indicator-value { color: #ec4899; }
+        .indicator-center {
+            text-align: center;
+        }
+
+        .threshold-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .threshold-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0ad4e;
+        }
+
+        .indicator-right {
+            text-align: center;
+        }
+
+        .issue-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .issue-status {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .issue-status.normal {
+            color: #2ea043;
+            background: rgba(46, 160, 67, 0.1);
+        }
+
+        .issue-status.warning {
+            color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .indicator-row[data-type="allout"] .indicator-value { color: #7c3aed; }
+        .indicator-row[data-type="susp"] .indicator-value { color: #f0ad4e; }
+        .indicator-row[data-type="test"] .indicator-value { color: #58a6ff; }
+        .indicator-row[data-type="conf"] .indicator-value { color: #f85149; }
+        .indicator-row[data-type="treat"] .indicator-value { color: #2ea043; }
+        .indicator-row[data-type="pres"] .indicator-value { color: #ec4899; }
 
         .data-management {
             background: rgba(13, 17, 23, 0.6);
@@ -659,22 +712,7 @@
             <h1 class="title">Sierra Leone Health Facilities & Malaria Surveillance</h1>
             <p class="subtitle">Comprehensive database of PHUs with integrated malaria surveillance monitoring</p>
             
-            <!-- Data Management Section -->
-            <div class="data-management" style="margin-top: 30px;">
-                <button id="loadGitHubBtn" class="upload-btn">🔄 Refresh Data</button>
-                <button id="downloadTemplateBtn" class="download-btn">📄 Download Template</button>
-                <span id="loadStatus" class="upload-status"></span>
-                
-                <div id="loadHelp" class="upload-help">
-                    <p>This dashboard loads data directly from the embedded GitHub repository:</p>
-                    <ul>
-                        <li><strong>Auto-loading:</strong> Data loads automatically when the page opens</li>
-                        <li><strong>Refresh:</strong> Click "Refresh Data" to reload the latest data</li>
-                        <li><strong>Template:</strong> Download template to see the expected Excel format</li>
-                    </ul>
-                    <p>Data source: <strong>Sierra Leone Health Facility Database</strong></p>
-                </div>
-            </div>
+
         </div>
 
         <div class="stats-bar" id="statsBar">
@@ -815,13 +853,7 @@
 
         // GitHub file handling
         function initializeDataManagement() {
-            const loadGitHubBtn = document.getElementById('loadGitHubBtn');
-            const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
-            
-            loadGitHubBtn.addEventListener('click', loadDataFromGitHub);
-            downloadTemplateBtn.addEventListener('click', downloadExcelTemplate);
-            
-            // Auto-load your data on page load
+            // Auto-load data on page load
             loadDataFromGitHub();
         }
 
@@ -844,10 +876,74 @@
             ];
 
             const surveillanceData = [
-                { Facility: 'Kailahun Government Hospital', Year: 2024, Month: 'January', AllOut: 850, Suspected: 210, Tested: 180, Confirmed: 95, Treated: 105, Presumed: 10 },
-                { Facility: 'Kailahun Government Hospital', Year: 2024, Month: 'February', AllOut: 790, Suspected: 195, Tested: 170, Confirmed: 88, Treated: 98, Presumed: 10 },
-                { Facility: 'Bo Government Hospital', Year: 2024, Month: 'January', AllOut: 1200, Suspected: 320, Tested: 280, Confirmed: 165, Treated: 175, Presumed: 10 },
-                { Facility: 'Luawa Under Fives CHC', Year: 2024, Month: 'January', AllOut: 280, Suspected: 75, Tested: 65, Confirmed: 35, Treated: 40, Presumed: 5 }
+                { 
+                    Facility: 'Kailahun Government Hospital', 
+                    Year: 2024, 
+                    Month: 'January', 
+                    AllOut: 850, 
+                    Suspected: 210, 
+                    Tested: 180, 
+                    Confirmed: 95, 
+                    Treated: 105, 
+                    Presumed: 10,
+                    ThresholdAllOut: 500,
+                    ThresholdSuspected: 100,
+                    ThresholdTested: 80,
+                    ThresholdConfirmed: 50,
+                    ThresholdTreated: 60,
+                    ThresholdPresumed: 20
+                },
+                { 
+                    Facility: 'Kailahun Government Hospital', 
+                    Year: 2024, 
+                    Month: 'February', 
+                    AllOut: 790, 
+                    Suspected: 195, 
+                    Tested: 170, 
+                    Confirmed: 88, 
+                    Treated: 98, 
+                    Presumed: 10,
+                    ThresholdAllOut: 500,
+                    ThresholdSuspected: 100,
+                    ThresholdTested: 80,
+                    ThresholdConfirmed: 50,
+                    ThresholdTreated: 60,
+                    ThresholdPresumed: 20
+                },
+                { 
+                    Facility: 'Bo Government Hospital', 
+                    Year: 2024, 
+                    Month: 'January', 
+                    AllOut: 1200, 
+                    Suspected: 320, 
+                    Tested: 280, 
+                    Confirmed: 165, 
+                    Treated: 175, 
+                    Presumed: 10,
+                    ThresholdAllOut: 800,
+                    ThresholdSuspected: 150,
+                    ThresholdTested: 120,
+                    ThresholdConfirmed: 80,
+                    ThresholdTreated: 90,
+                    ThresholdPresumed: 25
+                },
+                { 
+                    Facility: 'Luawa Under Fives CHC', 
+                    Year: 2024, 
+                    Month: 'January', 
+                    AllOut: 280, 
+                    Suspected: 75, 
+                    Tested: 65, 
+                    Confirmed: 35, 
+                    Treated: 40, 
+                    Presumed: 5,
+                    ThresholdAllOut: 200,
+                    ThresholdSuspected: 50,
+                    ThresholdTested: 40,
+                    ThresholdConfirmed: 25,
+                    ThresholdTreated: 30,
+                    ThresholdPresumed: 10
+                }
             ];
 
             // Create workbook
@@ -865,9 +961,7 @@
             // Download the file
             XLSX.writeFile(wb, 'sierra_leone_health_facilities_template.xlsx');
             
-            const status = document.getElementById('loadStatus');
-            status.textContent = 'Template downloaded! Fill it with your data and upload to GitHub, then provide the raw URL.';
-            status.className = 'upload-status success';
+            console.log('Template downloaded with threshold columns included');
         }
 
         async function loadDataFromGitHub() {
@@ -1117,7 +1211,15 @@
                         test: parseInt(row.Tested || row.tested || row.Test || row.test) || 0,
                         conf: parseInt(row.Confirmed || row.confirmed || row.Conf || row.conf) || 0,
                         treat: parseInt(row.Treated || row.treated || row.Treat || row.treat) || 0,
-                        pres: parseInt(row.Presumed || row.presumed || row.Pres || row.pres) || 0
+                        pres: parseInt(row.Presumed || row.presumed || row.Pres || row.pres) || 0,
+                        thresholds: {
+                            allout: parseInt(row.ThresholdAllOut || row.threshold_allout || row['Threshold AllOut']) || malariaIndicators.allout.threshold,
+                            susp: parseInt(row.ThresholdSuspected || row.threshold_susp || row['Threshold Suspected']) || malariaIndicators.susp.threshold,
+                            test: parseInt(row.ThresholdTested || row.threshold_test || row['Threshold Tested']) || malariaIndicators.test.threshold,
+                            conf: parseInt(row.ThresholdConfirmed || row.threshold_conf || row['Threshold Confirmed']) || malariaIndicators.conf.threshold,
+                            treat: parseInt(row.ThresholdTreated || row.threshold_treat || row['Threshold Treated']) || malariaIndicators.treat.threshold,
+                            pres: parseInt(row.ThresholdPresumed || row.threshold_pres || row['Threshold Presumed']) || malariaIndicators.pres.threshold
+                        }
                     };
                 } else {
                     console.warn(`Row ${index + 1}: Missing required data`, { facility, year, month });
@@ -1205,14 +1307,38 @@
         let selectedMonth = 'all';
         let selectedYear = '2024';
 
-        // Malaria surveillance indicators
+        // Malaria surveillance indicators with thresholds
         const malariaIndicators = {
-            allout: { label: "All Outpatients", description: "Total outpatient consultations" },
-            susp: { label: "Suspected Malaria", description: "Cases with suspected malaria" },
-            test: { label: "Cases Tested", description: "Cases tested for malaria" },
-            conf: { label: "Confirmed Cases", description: "Laboratory confirmed malaria cases" },
-            treat: { label: "Cases Treated", description: "Cases treated for malaria" },
-            pres: { label: "Presumed Cases", description: "Presumed malaria cases" }
+            allout: { 
+                label: "All Outpatients", 
+                description: "Total outpatient consultations",
+                threshold: 500
+            },
+            susp: { 
+                label: "Suspected Malaria", 
+                description: "Cases with suspected malaria",
+                threshold: 100
+            },
+            test: { 
+                label: "Cases Tested", 
+                description: "Cases tested for malaria",
+                threshold: 80
+            },
+            conf: { 
+                label: "Confirmed Cases", 
+                description: "Laboratory confirmed malaria cases",
+                threshold: 50
+            },
+            treat: { 
+                label: "Cases Treated", 
+                description: "Cases treated for malaria",
+                threshold: 60
+            },
+            pres: { 
+                label: "Presumed Cases", 
+                description: "Presumed malaria cases",
+                threshold: 20
+            }
         };
 
         // Generate malaria surveillance data for a facility
@@ -1221,6 +1347,17 @@
                           'July', 'August', 'September', 'October', 'November', 'December'];
             const years = ['2023', '2024'];
             const data = {};
+            
+            // Set thresholds based on facility type
+            const thresholds = {
+                'Hospital': { allout: 800, susp: 150, test: 120, conf: 80, treat: 90, pres: 25 },
+                'CHC': { allout: 300, susp: 70, test: 60, conf: 35, treat: 40, pres: 15 },
+                'CHP': { allout: 100, susp: 25, test: 20, conf: 12, treat: 15, pres: 8 },
+                'MCHP': { allout: 80, susp: 20, test: 15, conf: 10, treat: 12, pres: 5 },
+                'Clinic': { allout: 150, susp: 35, test: 30, conf: 18, treat: 22, pres: 10 }
+            };
+            
+            const facilityThresholds = thresholds[facilityType] || thresholds['Clinic'];
             
             years.forEach(year => {
                 data[year] = {};
@@ -1256,7 +1393,8 @@
                         test,
                         conf,
                         treat,
-                        pres
+                        pres,
+                        thresholds: facilityThresholds
                     };
                 });
             });
@@ -1435,33 +1573,37 @@
                 const card = document.createElement('div');
                 card.className = 'malaria-card fade-in';
                 
+                let indicatorsHTML = '';
+                Object.keys(malariaIndicators).forEach(key => {
+                    const indicator = malariaIndicators[key];
+                    const value = monthData[key];
+                    const threshold = monthData.thresholds ? monthData.thresholds[key] : indicator.threshold;
+                    const isIssue = value > threshold;
+                    
+                    indicatorsHTML += `
+                        <div class="indicator-row" data-type="${key}">
+                            <div class="indicator-left">
+                                <div class="indicator-name">${indicator.label}</div>
+                                <div class="indicator-value">${value.toLocaleString()}</div>
+                            </div>
+                            <div class="indicator-center">
+                                <div class="threshold-label">Threshold</div>
+                                <div class="threshold-value">${threshold.toLocaleString()}</div>
+                            </div>
+                            <div class="indicator-right">
+                                <div class="issue-label">Issue</div>
+                                <div class="issue-status ${isIssue ? 'warning' : 'normal'}">
+                                    ${isIssue ? 'Alert' : 'Normal'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
                 card.innerHTML = `
                     <div class="malaria-month">${month} ${selectedYear}</div>
                     <div class="malaria-indicators">
-                        <div class="indicator-item" data-type="allout">
-                            <div class="indicator-label">All Outpatients</div>
-                            <div class="indicator-value">${monthData.allout.toLocaleString()}</div>
-                        </div>
-                        <div class="indicator-item" data-type="susp">
-                            <div class="indicator-label">Suspected Malaria</div>
-                            <div class="indicator-value">${monthData.susp.toLocaleString()}</div>
-                        </div>
-                        <div class="indicator-item" data-type="test">
-                            <div class="indicator-label">Cases Tested</div>
-                            <div class="indicator-value">${monthData.test.toLocaleString()}</div>
-                        </div>
-                        <div class="indicator-item" data-type="conf">
-                            <div class="indicator-label">Confirmed Cases</div>
-                            <div class="indicator-value">${monthData.conf.toLocaleString()}</div>
-                        </div>
-                        <div class="indicator-item" data-type="treat">
-                            <div class="indicator-label">Cases Treated</div>
-                            <div class="indicator-value">${monthData.treat.toLocaleString()}</div>
-                        </div>
-                        <div class="indicator-item" data-type="pres">
-                            <div class="indicator-label">Presumed Cases</div>
-                            <div class="indicator-value">${monthData.pres.toLocaleString()}</div>
-                        </div>
+                        ${indicatorsHTML}
                     </div>
                 `;
                 
