@@ -1,0 +1,1710 @@
+<!DOCTYPE html>         
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sierra Leone Health Facilities & Malaria Surveillance</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+        }
+
+        .logo-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        .logo-placeholder {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #2ea043, #58a6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+        }
+
+        .logo-label {
+            color: #8b949e;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #8b949e;
+            font-size: 18px;
+        }
+
+        .stats-bar {
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .breadcrumb-item {
+            color: #58a6ff;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
+
+        .breadcrumb-item:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .breadcrumb-item.active {
+            color: #e6edf3;
+            background: rgba(88, 166, 255, 0.2);
+        }
+
+        .breadcrumb-separator {
+            color: #8b949e;
+        }
+
+        .search-filter {
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: #e6edf3;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #58a6ff;
+            color: #ffffff;
+            border-color: #58a6ff;
+        }
+
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .chiefdoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .facilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .malaria-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .malaria-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .malaria-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.1);
+            border-color: #58a6ff;
+        }
+
+        .malaria-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f85149, #f0ad4e, #2ea043);
+        }
+
+        .malaria-month {
+            font-size: 18px;
+            font-weight: 700;
+            color: #58a6ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .malaria-indicators {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .indicator-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 8px;
+            border: 1px solid #30363d;
+        }
+
+        .indicator-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .indicator-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e6edf3;
+        }
+
+        .indicator-item[data-type="allout"] .indicator-value { color: #7c3aed; }
+        .indicator-item[data-type="susp"] .indicator-value { color: #f0ad4e; }
+        .indicator-item[data-type="test"] .indicator-value { color: #58a6ff; }
+        .indicator-item[data-type="conf"] .indicator-value { color: #f85149; }
+        .indicator-item[data-type="treat"] .indicator-value { color: #2ea043; }
+        .indicator-item[data-type="pres"] .indicator-value { color: #ec4899; }
+
+        .data-management {
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .upload-btn, .download-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn {
+            background: #58a6ff;
+        }
+
+        .upload-btn:hover {
+            background: #2ea043;
+        }
+
+        .download-btn:hover {
+            background: #1f6feb;
+        }
+
+        .github-input {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #e6edf3;
+            font-size: 14px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .github-input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .github-input::placeholder {
+            color: #6e7681;
+        }
+
+        .upload-status {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .upload-status.success {
+            color: #2ea043;
+        }
+
+        .upload-status.error {
+            color: #f85149;
+        }
+
+        .upload-status.processing {
+            color: #f0ad4e;
+        }
+
+        .upload-help {
+            background: rgba(88, 166, 255, 0.1);
+            border-left: 3px solid #58a6ff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 6px 6px 0;
+            text-align: left;
+        }
+
+        .upload-help p {
+            margin-bottom: 10px;
+            color: #e6edf3;
+        }
+
+        .upload-help ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .upload-help li {
+            margin-bottom: 8px;
+            color: #8b949e;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .upload-help li::before {
+            content: "•";
+            color: #58a6ff;
+            position: absolute;
+            left: 0;
+        }
+
+        .region-card, .district-card, .chiefdom-card, .facility-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .region-card:hover, .district-card:hover, .chiefdom-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(88, 166, 255, 0.15);
+            border-color: #58a6ff;
+        }
+
+        .region-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #238636, #2ea043, #58a6ff);
+        }
+
+        .district-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #f0ad4e, #d58512);
+        }
+
+        .chiefdom-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #58a6ff, #7c3aed);
+        }
+
+        .facility-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #e6edf3;
+            margin-bottom: 5px;
+        }
+
+        .district-card .card-name {
+            font-size: 18px;
+        }
+
+        .chiefdom-card .card-name {
+            font-size: 16px;
+        }
+
+        .facility-card .card-name {
+            font-size: 15px;
+        }
+
+        .card-type {
+            color: #8b949e;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .card-stats {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .stats-label {
+            color: #8b949e;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .stats-value {
+            color: #58a6ff;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .card-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .summary-number {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+
+        .region-card .summary-number {
+            color: #2ea043;
+        }
+
+        .district-card .summary-number {
+            color: #f0ad4e;
+        }
+
+        .summary-label {
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        .click-hint {
+            text-align: center;
+            color: #8b949e;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            background: transparent;
+            color: #58a6ff;
+            border: 1px solid #30363d;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .section-hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            color: #8b949e;
+            font-style: italic;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .logos {
+                padding: 0 10px;
+            }
+
+            .logo-container img,
+            .logo-placeholder {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-placeholder {
+                font-size: 14px;
+            }
+
+            .regions-grid, .districts-grid, .chiefdoms-grid, .facilities-grid, .malaria-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .breadcrumb {
+                flex-wrap: wrap;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .malaria-indicators {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .indicator-item {
+                padding: 8px;
+            }
+
+            .indicator-value {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logos">
+                <div class="logo-container">
+                    <!-- Replace src with your Ministry of Health logo -->
+                    <img src="NMCP.png" alt="Ministry of Health Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display: none;">MoHS</div>
+                    <div class="logo-label">NMCP-SL</div>
+                </div>
+                <div class="logo-container">
+                    <!-- Replace src with your Sierra Leone logo -->
+                    <img src="ICF-SL.jpg" alt="Sierra Leone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display: none; background: linear-gradient(135deg, #f85149, #ec4899);">SL</div>
+                    <div class="logo-label">ICF-SL</div>
+                </div>
+            </div>
+            <h1 class="title">Sierra Leone Health Facilities & Malaria Surveillance</h1>
+            <p class="subtitle">Comprehensive database of PHUs with integrated malaria surveillance monitoring</p>
+            
+            <!-- Data Management Section -->
+            <div class="data-management" style="margin-top: 30px;">
+                <button id="loadGitHubBtn" class="upload-btn">🔄 Load Data from GitHub</button>
+                <button id="downloadTemplateBtn" class="download-btn">📄 Download Template</button>
+                <input type="text" id="githubUrlInput" class="github-input" placeholder="GitHub raw file URL (required)" style="margin: 10px;">
+                <span id="loadStatus" class="upload-status"></span>
+                
+                <div id="loadHelp" class="upload-help">
+                    <p>Load data directly from GitHub repositories. Provide the URL to your Excel file:</p>
+                    <ul>
+                        <li><strong>Step 1:</strong> Download the template to see the required format</li>
+                        <li><strong>Step 2:</strong> Fill the Excel file with your data (3 sheets: Regions, Facilities, Surveillance)</li>
+                        <li><strong>Step 3:</strong> Upload to GitHub and get the raw file URL</li>
+                        <li><strong>Step 4:</strong> Paste the URL above and click "Load Data"</li>
+                    </ul>
+                    <p>Excel file should contain sheets named: <strong>Regions</strong>, <strong>Facilities</strong>, and <strong>Surveillance</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalFacilities">0</span>
+                <span class="stat-label">Total Health Facilities</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalChiefdoms">0</span>
+                <span class="stat-label">Chiefdoms/Zones</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalDistricts">0</span>
+                <span class="stat-label">Districts</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalRegions">0</span>
+                <span class="stat-label">Regions</span>
+            </div>
+        </div>
+
+        <div class="breadcrumb" id="breadcrumb">
+            <span class="breadcrumb-item active" onclick="showRegions()">Regions</span>
+        </div>
+
+        <div class="search-filter" id="searchFilter" style="display: none;">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search health facilities...">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-type="all">All</button>
+                <button class="filter-btn" data-type="Hospital">Hospitals</button>
+                <button class="filter-btn" data-type="CHC">CHCs</button>
+                <button class="filter-btn" data-type="CHP">CHPs</button>
+                <button class="filter-btn" data-type="MCHP">MCHPs</button>
+                <button class="filter-btn" data-type="Clinic">Clinics</button>
+            </div>
+        </div>
+
+        <!-- Regions Section -->
+        <div id="regions-section">
+            <div class="regions-grid" id="regionsGrid">
+                <!-- Regions will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Districts Section -->
+        <div id="districts-section" class="section-hidden">
+            <button class="back-button" onclick="showRegions()">← Back to Regions</button>
+            <div class="districts-grid" id="districtsGrid">
+                <!-- Districts will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Chiefdoms Section -->
+        <div id="chiefdoms-section" class="section-hidden">
+            <button class="back-button" onclick="showDistricts()">← Back to Districts</button>
+            <div class="chiefdoms-grid" id="chiefdomsGrid">
+                <!-- Chiefdoms will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Health Facilities Section -->
+        <div id="facilities-section" class="section-hidden">
+            <button class="back-button" onclick="showChiefdoms()">← Back to Chiefdoms</button>
+            <div class="facilities-grid" id="facilitiesGrid">
+                <!-- Health facilities will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Facility Dashboard Section -->
+        <div id="facility-dashboard-section" class="section-hidden">
+            <button class="back-button" onclick="showFacilities()">← Back to Health Facilities</button>
+            
+            <div id="facility-info" class="stats-bar" style="margin-bottom: 30px;">
+                <!-- Facility info will be populated by JavaScript -->
+            </div>
+
+            <div class="search-filter">
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="color: #8b949e; font-size: 14px; font-weight: 600;">Year:</label>
+                        <select id="yearSelector" class="search-input" style="width: auto; min-width: 120px;">
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="color: #8b949e; font-size: 14px; font-weight: 600;">Month:</label>
+                        <select id="monthSelector" class="search-input" style="width: auto; min-width: 150px;">
+                            <option value="all">All Months</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="malaria-cards-grid" id="malariaCardsGrid">
+                <!-- Malaria surveillance cards will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Health facilities data - will be loaded from Excel
+        let healthFacilitiesData = {};
+        
+        // Data structure - will be loaded from Excel
+        let regionsData = {};
+        
+        // Chiefdoms data - will be loaded from Excel  
+        let chiefdomsData = {};
+
+        // Surveillance data - will be loaded from Excel
+        let surveillanceData = {};
+
+        // Data management variables
+        let customData = {
+            regions: null,
+            facilities: null,
+            surveillance: null
+        };
+
+        // Default GitHub URLs for Excel files (replace with your actual repository URLs)
+        const defaultGitHubUrls = {
+            complete: 'https://raw.githubusercontent.com/your-username/your-repo/main/data/health_facilities_data.xlsx'
+        };
+
+        // GitHub file handling
+        function initializeDataManagement() {
+            const loadGitHubBtn = document.getElementById('loadGitHubBtn');
+            const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+            
+            loadGitHubBtn.addEventListener('click', loadDataFromGitHub);
+            downloadTemplateBtn.addEventListener('click', downloadExcelTemplate);
+            
+            // Show message about needing data
+            const status = document.getElementById('loadStatus');
+            status.textContent = 'Please provide a GitHub URL to load data, or download the template to see the expected format.';
+            status.className = 'upload-status';
+        }
+
+        function downloadExcelTemplate() {
+            // Create sample data for the Excel template
+            const regionsData = [
+                { Region: 'Eastern Region', District: 'Kailahun District', Chiefdom: 'Luawa Chiefdom' },
+                { Region: 'Eastern Region', District: 'Kailahun District', Chiefdom: 'Jawei Chiefdom' },
+                { Region: 'Eastern Region', District: 'Kenema District', Chiefdom: 'Nongowa Chiefdom' },
+                { Region: 'Southern Region', District: 'Bo District', Chiefdom: 'Bo City' },
+                { Region: 'Southern Region', District: 'Bo District', Chiefdom: 'Kakua Chiefdom' }
+            ];
+
+            const facilitiesData = [
+                { Location: 'Luawa Chiefdom', Facility: 'Kailahun Government Hospital', Type: 'Hospital', InCharge: 'Dr. Mohamed Kamara', Contact: '+232 76123456' },
+                { Location: 'Luawa Chiefdom', Facility: 'Luawa Under Fives CHC', Type: 'CHC', InCharge: 'Nurse Mary Sesay', Contact: '+232 77234567' },
+                { Location: 'Bo City', Facility: 'Bo Government Hospital', Type: 'Hospital', InCharge: 'Dr. Fatmata Bangura', Contact: '+232 78345678' },
+                { Location: 'Bo City', Facility: 'Kakua Static CHC', Type: 'CHC', InCharge: 'Nurse James Conteh', Contact: '+232 76456789' },
+                { Location: 'Nongowa Chiefdom', Facility: 'Hangah CHC', Type: 'CHC', InCharge: 'CHW Saidu Turay', Contact: '+232 77567890' }
+            ];
+
+            const surveillanceData = [
+                { Facility: 'Kailahun Government Hospital', Year: 2024, Month: 'January', AllOut: 850, Suspected: 210, Tested: 180, Confirmed: 95, Treated: 105, Presumed: 10 },
+                { Facility: 'Kailahun Government Hospital', Year: 2024, Month: 'February', AllOut: 790, Suspected: 195, Tested: 170, Confirmed: 88, Treated: 98, Presumed: 10 },
+                { Facility: 'Bo Government Hospital', Year: 2024, Month: 'January', AllOut: 1200, Suspected: 320, Tested: 280, Confirmed: 165, Treated: 175, Presumed: 10 },
+                { Facility: 'Luawa Under Fives CHC', Year: 2024, Month: 'January', AllOut: 280, Suspected: 75, Tested: 65, Confirmed: 35, Treated: 40, Presumed: 5 }
+            ];
+
+            // Create workbook
+            const wb = XLSX.utils.book_new();
+            
+            // Add sheets
+            const regionsWS = XLSX.utils.json_to_sheet(regionsData);
+            const facilitiesWS = XLSX.utils.json_to_sheet(facilitiesData);
+            const surveillanceWS = XLSX.utils.json_to_sheet(surveillanceData);
+            
+            XLSX.utils.book_append_sheet(wb, regionsWS, 'Regions');
+            XLSX.utils.book_append_sheet(wb, facilitiesWS, 'Facilities');
+            XLSX.utils.book_append_sheet(wb, surveillanceWS, 'Surveillance');
+            
+            // Download the file
+            XLSX.writeFile(wb, 'sierra_leone_health_facilities_template.xlsx');
+            
+            const status = document.getElementById('loadStatus');
+            status.textContent = 'Template downloaded! Fill it with your data and upload to GitHub, then provide the raw URL.';
+            status.className = 'upload-status success';
+        }
+
+        async function loadDataFromGitHub() {
+            const status = document.getElementById('loadStatus');
+            const customUrl = document.getElementById('githubUrlInput').value.trim();
+            
+            status.textContent = 'Loading Excel data from GitHub...';
+            status.className = 'upload-status processing';
+            
+            try {
+                const url = customUrl || defaultGitHubUrls.complete;
+                if (!url || url === defaultGitHubUrls.complete) {
+                    throw new Error('Please provide a valid GitHub raw file URL in the input field');
+                }
+                
+                const workbook = await fetchExcelFromGitHub(url);
+                
+                // Process all available sheets
+                const sheetNames = workbook.SheetNames;
+                console.log('Available sheets:', sheetNames);
+                
+                let processedSheets = [];
+                
+                if (sheetNames.includes('Regions') || sheetNames.includes('regions')) {
+                    const sheetName = sheetNames.includes('Regions') ? 'Regions' : 'regions';
+                    const newRegionsData = processRegionsWorkbook(workbook, sheetName);
+                    if (Object.keys(newRegionsData).length > 0) {
+                        customData.regions = newRegionsData;
+                        processedSheets.push('Regions');
+                        console.log('Loaded regions data:', Object.keys(newRegionsData));
+                    }
+                }
+                
+                if (sheetNames.includes('Facilities') || sheetNames.includes('facilities')) {
+                    const sheetName = sheetNames.includes('Facilities') ? 'Facilities' : 'facilities';
+                    const newFacilitiesData = processFacilitiesWorkbook(workbook, sheetName);
+                    if (Object.keys(newFacilitiesData).length > 0) {
+                        customData.facilities = newFacilitiesData;
+                        processedSheets.push('Facilities');
+                        console.log('Loaded facilities data for locations:', Object.keys(newFacilitiesData));
+                    }
+                }
+                
+                if (sheetNames.includes('Surveillance') || sheetNames.includes('surveillance')) {
+                    const sheetName = sheetNames.includes('Surveillance') ? 'Surveillance' : 'surveillance';
+                    const newSurveillanceData = processSurveillanceWorkbook(workbook, sheetName);
+                    if (Object.keys(newSurveillanceData).length > 0) {
+                        customData.surveillance = newSurveillanceData;
+                        processedSheets.push('Surveillance');
+                        console.log('Loaded surveillance data for facilities:', Object.keys(newSurveillanceData));
+                    }
+                }
+                
+                if (processedSheets.length === 0) {
+                    throw new Error(`No valid data sheets found. Available sheets: ${sheetNames.join(', ')}. Expected: Regions, Facilities, Surveillance`);
+                }
+                
+                status.textContent = `Successfully loaded Excel data! Processed sheets: ${processedSheets.join(', ')}`;
+                status.className = 'upload-status success';
+                
+                // Refresh the dashboard with new data
+                refreshDashboard();
+                
+            } catch (error) {
+                console.error('Error loading from GitHub:', error);
+                status.textContent = `Error: ${error.message}`;
+                status.className = 'upload-status error';
+            }
+        }
+
+        async function fetchExcelFromGitHub(url) {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText} - Check if the URL is correct and the file exists`);
+            }
+            
+            const arrayBuffer = await response.arrayBuffer();
+            return XLSX.read(arrayBuffer, { type: 'array' });
+        }
+
+        function processRegionsWorkbook(workbook, sheetName) {
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet);
+            const regions = {};
+            
+            console.log(`Processing ${sheetName} sheet with ${data.length} rows`);
+            console.log('Sample row:', data[0]);
+            
+            data.forEach((row, index) => {
+                const region = row.Region?.toString().trim();
+                const district = row.District?.toString().trim();
+                const chiefdom = row.Chiefdom?.toString().trim();
+                
+                if (region && district) {
+                    if (!regions[region]) {
+                        regions[region] = [];
+                    }
+                    if (!regions[region].includes(district)) {
+                        regions[region].push(district);
+                    }
+                    
+                    // Store chiefdoms separately
+                    if (chiefdom) {
+                        if (!chiefdomsData[district]) {
+                            chiefdomsData[district] = [];
+                        }
+                        if (!chiefdomsData[district].includes(chiefdom)) {
+                            chiefdomsData[district].push(chiefdom);
+                        }
+                    }
+                } else {
+                    console.warn(`Row ${index + 1}: Missing required data`, { region, district, chiefdom });
+                }
+            });
+            
+            console.log('Processed regions:', Object.keys(regions));
+            return regions;
+        }
+
+        function processFacilitiesWorkbook(workbook, sheetName) {
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet);
+            const facilities = {};
+            
+            console.log(`Processing ${sheetName} sheet with ${data.length} rows`);
+            console.log('Sample row:', data[0]);
+            console.log('Available columns:', Object.keys(data[0] || {}));
+            
+            data.forEach((row, index) => {
+                // Try multiple possible column names
+                const location = row.Location?.toString().trim() || 
+                               row.location?.toString().trim() ||
+                               row.Chiefdom?.toString().trim() ||
+                               row.chiefdom?.toString().trim();
+                               
+                const name = row.Facility?.toString().trim() || 
+                           row.facility?.toString().trim() ||
+                           row.Name?.toString().trim() ||
+                           row.name?.toString().trim() ||
+                           row['Facility Name']?.toString().trim();
+                           
+                const type = row.Type?.toString().trim() || 
+                           row.type?.toString().trim() ||
+                           row['Facility Type']?.toString().trim() ||
+                           'Clinic';
+                           
+                const inCharge = row.InCharge?.toString().trim() || 
+                               row['In Charge']?.toString().trim() ||
+                               row.incharge?.toString().trim() ||
+                               generateInCharge(type);
+                               
+                const contact = row.Contact?.toString().trim() || 
+                              row.contact?.toString().trim() ||
+                              row.Phone?.toString().trim() ||
+                              row.phone?.toString().trim() ||
+                              generateContact();
+                
+                if (location && name) {
+                    if (!facilities[location]) {
+                        facilities[location] = [];
+                    }
+                    
+                    facilities[location].push({
+                        name,
+                        type,
+                        inCharge,
+                        contact
+                    });
+                } else {
+                    console.warn(`Row ${index + 1}: Missing required data`, { location, name });
+                }
+            });
+            
+            console.log('Processed facilities for locations:', Object.keys(facilities));
+            return facilities;
+        }
+
+        function processSurveillanceWorkbook(workbook, sheetName) {
+            const sheet = workbook.Sheets[sheetName];
+            const data = XLSX.utils.sheet_to_json(sheet);
+            const surveillance = {};
+            
+            console.log(`Processing ${sheetName} sheet with ${data.length} rows`);
+            console.log('Sample row:', data[0]);
+            
+            data.forEach((row, index) => {
+                const facility = row.Facility?.toString().trim() ||
+                               row.facility?.toString().trim() ||
+                               row.Name?.toString().trim() ||
+                               row.name?.toString().trim();
+                               
+                const year = row.Year?.toString() || row.year?.toString();
+                const month = row.Month?.toString().trim() || row.month?.toString().trim();
+                
+                if (facility && year && month) {
+                    if (!surveillance[facility]) {
+                        surveillance[facility] = {};
+                    }
+                    if (!surveillance[facility][year]) {
+                        surveillance[facility][year] = {};
+                    }
+                    
+                    surveillance[facility][year][month] = {
+                        allout: parseInt(row.AllOut || row.allout || row['All Out'] || row.Allout) || 0,
+                        susp: parseInt(row.Suspected || row.suspected || row.Susp || row.susp) || 0,
+                        test: parseInt(row.Tested || row.tested || row.Test || row.test) || 0,
+                        conf: parseInt(row.Confirmed || row.confirmed || row.Conf || row.conf) || 0,
+                        treat: parseInt(row.Treated || row.treated || row.Treat || row.treat) || 0,
+                        pres: parseInt(row.Presumed || row.presumed || row.Pres || row.pres) || 0
+                    };
+                } else {
+                    console.warn(`Row ${index + 1}: Missing required data`, { facility, year, month });
+                }
+            });
+            
+            console.log('Processed surveillance for facilities:', Object.keys(surveillance));
+            return surveillance;
+        }
+        
+        function generateInCharge(type) {
+            const names = ['Kamara', 'Sesay', 'Bangura', 'Conteh', 'Turay', 'Kargbo', 'Koroma', 'Jalloh'];
+            const firstName = ['Dr. Mohamed', 'Dr. Fatmata', 'Dr. Ibrahim', 'Dr. Aminata', 'Dr. Alpha', 'Dr. Kadiatu', 
+                              'Nurse Mary', 'Nurse James', 'Nurse Adama', 'Nurse Isatu', 'CHW Saidu', 'CHW Mariama', 'TBA Memuna'];
+            
+            let prefix;
+            if (type === 'Hospital') {
+                prefix = firstName[Math.floor(Math.random() * 6)];
+            } else if (type === 'CHC') {
+                prefix = firstName[6 + Math.floor(Math.random() * 4)];
+            } else if (type === 'CHP') {
+                prefix = firstName[10 + Math.floor(Math.random() * 2)];
+            } else if (type === 'MCHP') {
+                prefix = 'TBA ' + firstName[Math.floor(Math.random() * firstName.length)].split(' ')[1];
+            } else {
+                prefix = firstName[Math.floor(Math.random() * firstName.length)];
+            }
+            
+            return prefix + ' ' + names[Math.floor(Math.random() * names.length)];
+        }
+        
+        function generateContact() {
+            const contacts = ['+232 76', '+232 77', '+232 78'];
+            return contacts[Math.floor(Math.random() * contacts.length)] + 
+                   String(Math.floor(Math.random() * 900000) + 100000);
+        }
+
+        function refreshDashboard() {
+            // Update global data if custom data exists
+            if (customData.regions && Object.keys(customData.regions).length > 0) {
+                // Clear existing data
+                Object.keys(regionsData).forEach(key => delete regionsData[key]);
+                
+                // Load new regions data
+                Object.assign(regionsData, customData.regions);
+                
+                console.log('Updated regions:', Object.keys(regionsData));
+                console.log('Updated districts:', Object.keys(chiefdomsData));
+            }
+            
+            if (customData.facilities && Object.keys(customData.facilities).length > 0) {
+                // Replace existing facilities data
+                Object.keys(healthFacilitiesData).forEach(key => delete healthFacilitiesData[key]);
+                Object.assign(healthFacilitiesData, customData.facilities);
+                
+                console.log('Updated facilities for locations:', Object.keys(healthFacilitiesData));
+            }
+            
+            if (customData.surveillance && Object.keys(customData.surveillance).length > 0) {
+                // Store surveillance data globally
+                Object.assign(surveillanceData, customData.surveillance);
+                console.log('Updated surveillance data for facilities:', Object.keys(surveillanceData));
+            }
+            
+            // Recalculate statistics and refresh display
+            calculateStats();
+            showRegions();
+        }
+
+        // PHU facility type definitions
+        const facilityTypes = {
+            "Hospital": { color: "#f85149", description: "Hospital" },
+            "CHC": { color: "#f0ad4e", description: "Community Health Centre" },
+            "CHP": { color: "#58a6ff", description: "Community Health Post" },
+            "MCHP": { color: "#2ea043", description: "Maternal & Child Health Post" },
+            "Clinic": { color: "#7c3aed", description: "Clinic" }
+        };
+
+        let currentRegion = null;
+        let currentDistrict = null;
+        let currentChiefdom = null;
+        let currentFacility = null;
+        let filteredFacilities = [];
+        let currentFilter = 'all';
+        let selectedMonth = 'all';
+        let selectedYear = '2024';
+
+        // Malaria surveillance indicators
+        const malariaIndicators = {
+            allout: { label: "All Outpatients", description: "Total outpatient consultations" },
+            susp: { label: "Suspected Malaria", description: "Cases with suspected malaria" },
+            test: { label: "Cases Tested", description: "Cases tested for malaria" },
+            conf: { label: "Confirmed Cases", description: "Laboratory confirmed malaria cases" },
+            treat: { label: "Cases Treated", description: "Cases treated for malaria" },
+            pres: { label: "Presumed Cases", description: "Presumed malaria cases" }
+        };
+
+        // Generate malaria surveillance data for a facility
+        function generateMalariaData(facilityName, facilityType) {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            const years = ['2023', '2024'];
+            const data = {};
+            
+            years.forEach(year => {
+                data[year] = {};
+                
+                months.forEach(month => {
+                    // Base numbers vary by facility type
+                    let baseAllout;
+                    switch(facilityType) {
+                        case 'Hospital': baseAllout = Math.floor(Math.random() * 1000) + 800; break;
+                        case 'CHC': baseAllout = Math.floor(Math.random() * 400) + 200; break;
+                        case 'CHP': baseAllout = Math.floor(Math.random() * 150) + 50; break;
+                        case 'MCHP': baseAllout = Math.floor(Math.random() * 100) + 30; break;
+                        default: baseAllout = Math.floor(Math.random() * 200) + 100;
+                    }
+                    
+                    // Seasonal variation (higher in rainy season)
+                    const isRainySeason = ['May', 'June', 'July', 'August', 'September', 'October'].includes(month);
+                    const seasonalMultiplier = isRainySeason ? 1.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.4;
+                    
+                    // Year-over-year variation (2024 slightly higher due to population growth and improved reporting)
+                    const yearMultiplier = year === '2024' ? 1.05 + Math.random() * 0.1 : 0.95 + Math.random() * 0.1;
+                    
+                    const allout = Math.floor(baseAllout * seasonalMultiplier * yearMultiplier);
+                    const susp = Math.floor(allout * (0.15 + Math.random() * 0.25)); // 15-40% suspected
+                    const test = Math.floor(susp * (0.6 + Math.random() * 0.3)); // 60-90% tested
+                    const conf = Math.floor(test * (0.3 + Math.random() * 0.4)); // 30-70% confirmed
+                    const treat = Math.floor((conf + susp - test) * (0.8 + Math.random() * 0.2)); // 80-100% treated
+                    const pres = Math.max(0, treat - conf); // Presumed = treated - confirmed
+                    
+                    data[year][month] = {
+                        allout,
+                        susp,
+                        test,
+                        conf,
+                        treat,
+                        pres
+                    };
+                });
+            });
+            
+            return data;
+        }
+
+        // Calculate statistics
+        function calculateStats() {
+            const totalFacilities = Object.values(healthFacilitiesData).reduce((sum, facilities) => sum + facilities.length, 0);
+            const totalChiefdoms = Object.keys(healthFacilitiesData).length;
+            const totalDistricts = Object.keys(chiefdomsData).length;
+            const totalRegions = Object.keys(regionsData).length;
+            
+            document.getElementById('totalFacilities').textContent = totalFacilities;
+            document.getElementById('totalChiefdoms').textContent = totalChiefdoms;
+            document.getElementById('totalDistricts').textContent = totalDistricts;
+            document.getElementById('totalRegions').textContent = totalRegions;
+        }
+
+        function showRegions() {
+            document.getElementById('regions-section').classList.remove('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('facility-dashboard-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
+            
+            currentRegion = null;
+            currentDistrict = null;
+            currentChiefdom = null;
+            currentFacility = null;
+            updateBreadcrumb();
+            renderRegions();
+        }
+
+        function showDistricts(regionName = null) {
+            if (regionName) {
+                currentRegion = regionName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.remove('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('facility-dashboard-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
+            
+            currentDistrict = null;
+            currentChiefdom = null;
+            currentFacility = null;
+            updateBreadcrumb();
+            renderDistricts();
+        }
+
+        function showChiefdoms(districtName = null) {
+            if (districtName) {
+                currentDistrict = districtName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.remove('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('facility-dashboard-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
+            
+            currentChiefdom = null;
+            currentFacility = null;
+            updateBreadcrumb();
+            renderChiefdoms();
+        }
+
+        function showFacilities(chiefdomName = null) {
+            if (chiefdomName) {
+                currentChiefdom = chiefdomName;
+            }
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.remove('section-hidden');
+            document.getElementById('facility-dashboard-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'block';
+            
+            currentFacility = null;
+            updateBreadcrumb();
+            setupSearch();
+            renderFacilities();
+        }
+
+        function showFacilityDashboard(facility) {
+            currentFacility = facility;
+            
+            document.getElementById('regions-section').classList.add('section-hidden');
+            document.getElementById('districts-section').classList.add('section-hidden');
+            document.getElementById('chiefdoms-section').classList.add('section-hidden');
+            document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('facility-dashboard-section').classList.remove('section-hidden');
+            
+            // Check if custom surveillance data exists for this facility
+            const facilityKey = facility.name;
+            if (surveillanceData && surveillanceData[facilityKey]) {
+                facility.malariaData = surveillanceData[facilityKey];
+            } else if (customData.surveillance && customData.surveillance[facilityKey]) {
+                facility.malariaData = customData.surveillance[facilityKey];
+            } else if (!facility.malariaData) {
+                // Generate malaria data if not exists
+                facility.malariaData = generateMalariaData(facility.name, facility.type);
+            }
+            
+            updateFacilityInfo();
+            setupMonthSelector();
+            renderMalariaCards();
+        }
+
+        function updateFacilityInfo() {
+            const facilityInfo = document.getElementById('facility-info');
+            const facilityTypeInfo = facilityTypes[currentFacility.type] || { color: "#8b949e", description: "Health facility" };
+            
+            facilityInfo.innerHTML = `
+                <div style="text-align: center;">
+                    <h2 style="color: #58a6ff; margin-bottom: 10px;">${currentFacility.name}</h2>
+                    <div style="color: ${facilityTypeInfo.color}; font-size: 16px; font-weight: 600; margin-bottom: 5px;">${currentFacility.type}</div>
+                    <div style="color: #8b949e; font-size: 14px; margin-bottom: 10px;">${currentChiefdom}, ${currentDistrict}</div>
+                    <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                        <div>
+                            <span style="color: #8b949e; font-size: 12px;">PHU IN-CHARGE:</span>
+                            <span style="color: #e6edf3; font-weight: 600; margin-left: 5px;">${currentFacility.inCharge}</span>
+                        </div>
+                        <div>
+                            <span style="color: #8b949e; font-size: 12px;">CONTACT:</span>
+                            <span style="color: #58a6ff; font-weight: 500; margin-left: 5px;">${currentFacility.contact}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupMonthSelector() {
+            const monthSelector = document.getElementById('monthSelector');
+            const yearSelector = document.getElementById('yearSelector');
+            
+            monthSelector.value = selectedMonth;
+            yearSelector.value = selectedYear;
+            
+            monthSelector.addEventListener('change', function() {
+                selectedMonth = this.value;
+                renderMalariaCards();
+            });
+            
+            yearSelector.addEventListener('change', function() {
+                selectedYear = this.value;
+                renderMalariaCards();
+            });
+        }
+
+        function renderMalariaCards() {
+            const grid = document.getElementById('malariaCardsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentFacility || !currentFacility.malariaData) return;
+            
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const monthsToShow = selectedMonth === 'all' ? months : [selectedMonth];
+            const yearData = currentFacility.malariaData[selectedYear];
+            
+            if (!yearData) return;
+            
+            monthsToShow.forEach(month => {
+                const monthData = yearData[month];
+                if (!monthData) return;
+                
+                const card = document.createElement('div');
+                card.className = 'malaria-card fade-in';
+                
+                card.innerHTML = `
+                    <div class="malaria-month">${month} ${selectedYear}</div>
+                    <div class="malaria-indicators">
+                        <div class="indicator-item" data-type="allout">
+                            <div class="indicator-label">All Outpatients</div>
+                            <div class="indicator-value">${monthData.allout.toLocaleString()}</div>
+                        </div>
+                        <div class="indicator-item" data-type="susp">
+                            <div class="indicator-label">Suspected Malaria</div>
+                            <div class="indicator-value">${monthData.susp.toLocaleString()}</div>
+                        </div>
+                        <div class="indicator-item" data-type="test">
+                            <div class="indicator-label">Cases Tested</div>
+                            <div class="indicator-value">${monthData.test.toLocaleString()}</div>
+                        </div>
+                        <div class="indicator-item" data-type="conf">
+                            <div class="indicator-label">Confirmed Cases</div>
+                            <div class="indicator-value">${monthData.conf.toLocaleString()}</div>
+                        </div>
+                        <div class="indicator-item" data-type="treat">
+                            <div class="indicator-label">Cases Treated</div>
+                            <div class="indicator-value">${monthData.treat.toLocaleString()}</div>
+                        </div>
+                        <div class="indicator-item" data-type="pres">
+                            <div class="indicator-label">Presumed Cases</div>
+                            <div class="indicator-value">${monthData.pres.toLocaleString()}</div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            let html = '<span class="breadcrumb-item' + (!currentRegion ? ' active' : '') + '" onclick="showRegions()">Regions</span>';
+            
+            if (currentRegion) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item' + (!currentDistrict ? ' active' : '') + '" onclick="showDistricts()">' + currentRegion + '</span>';
+            }
+            
+            if (currentDistrict) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item' + (!currentChiefdom ? ' active' : '') + '" onclick="showChiefdoms()">' + currentDistrict + '</span>';
+            }
+
+            if (currentChiefdom) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item' + (!currentFacility ? ' active' : '') + '" onclick="showFacilities()">' + currentChiefdom + '</span>';
+            }
+
+            if (currentFacility) {
+                html += '<span class="breadcrumb-separator">›</span>';
+                html += '<span class="breadcrumb-item active">' + currentFacility.name + '</span>';
+            }
+            
+            breadcrumb.innerHTML = html;
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            searchInput.addEventListener('input', performSearch);
+            
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.type;
+                    performSearch();
+                });
+            });
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const facilities = healthFacilitiesData[currentChiefdom] || [];
+            
+            filteredFacilities = facilities.filter(facility => {
+                const matchesSearch = facility.name.toLowerCase().includes(searchTerm) ||
+                                    facility.inCharge.toLowerCase().includes(searchTerm);
+                const matchesFilter = currentFilter === 'all' || facility.type === currentFilter;
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderFacilities();
+        }
+
+        function renderRegions() {
+            const grid = document.getElementById('regionsGrid');
+            grid.innerHTML = '';
+            
+            if (Object.keys(regionsData).length === 0) {
+                grid.innerHTML = '<div class="no-results">No data loaded. Please provide a GitHub URL to load your Excel data, or download the template to see the expected format.</div>';
+                return;
+            }
+            
+            Object.keys(regionsData).forEach(regionName => {
+                const districts = regionsData[regionName];
+                let totalChiefdoms = 0;
+                let totalFacilities = 0;
+                
+                districts.forEach(district => {
+                    if (chiefdomsData[district]) {
+                        totalChiefdoms += chiefdomsData[district].length;
+                        chiefdomsData[district].forEach(chiefdom => {
+                            if (healthFacilitiesData[chiefdom]) {
+                                totalFacilities += healthFacilitiesData[chiefdom].length;
+                            }
+                        });
+                    }
+                });
+                
+                const card = document.createElement('div');
+                card.className = 'region-card fade-in';
+                card.onclick = () => showDistricts(regionName);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${regionName}</div>
+                            <div class="card-type">Region</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${totalFacilities}</div>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="summary-item">
+                            <span class="summary-number">${districts.length}</span>
+                            <span class="summary-label">Chiefdoms/Zones</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalFacilities}</span>
+                            <span class="summary-label">Facilities</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to view districts</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderDistricts() {
+            const grid = document.getElementById('districtsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentRegion) return;
+            
+            const districts = regionsData[currentRegion];
+            
+            districts.forEach(districtName => {
+                const chiefdoms = chiefdomsData[districtName] || [];
+                let totalFacilities = 0;
+                
+                chiefdoms.forEach(chiefdom => {
+                    if (healthFacilitiesData[chiefdom]) {
+                        totalFacilities += healthFacilitiesData[chiefdom].length;
+                    }
+                });
+                
+                const card = document.createElement('div');
+                card.className = 'district-card fade-in';
+                card.onclick = () => showChiefdoms(districtName);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${districtName}</div>
+                            <div class="card-type">District</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${totalFacilities}</div>
+                        </div>
+                    </div>
+                    <div class="card-summary">
+                        <div class="summary-item">
+                            <span class="summary-number">${chiefdoms.length}</span>
+                            <span class="summary-label">Chiefdoms</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalFacilities}</span>
+                            <span class="summary-label">Facilities</span>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to view chiefdoms/zones</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderChiefdoms() {
+            const grid = document.getElementById('chiefdomsGrid');
+            grid.innerHTML = '';
+            
+            if (!currentDistrict) return;
+            
+            const chiefdoms = chiefdomsData[currentDistrict] || [];
+            
+            chiefdoms.forEach(chiefdomName => {
+                const facilities = healthFacilitiesData[chiefdomName] || [];
+                
+                const card = document.createElement('div');
+                card.className = 'chiefdom-card fade-in';
+                
+                if (facilities.length > 0) {
+                    card.style.cursor = 'pointer';
+                    card.onclick = () => showFacilities(chiefdomName);
+                }
+                
+                const isCity = chiefdomName.includes('City') || chiefdomName.includes('Town') || chiefdomName.includes('Zone');
+                const type = isCity ? (chiefdomName.includes('Zone') ? 'Zone' : 'City/Town') : 'Chiefdom';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${chiefdomName}</div>
+                            <div class="card-type">${type}</div>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${facilities.length}</div>
+                        </div>
+                    </div>
+                    ${facilities.length > 0 ? 
+                        `<div class="card-summary">
+                            <div class="summary-item">
+                                <span class="summary-number">${facilities.length}</span>
+                                <span class="summary-label">Facilities</span>
+                            </div>
+                        </div>
+                        <div class="click-hint">Click to view health facilities</div>` : 
+                        '<div class="click-hint" style="color: #6e7681;">No health facility data available</div>'
+                    }
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFacilities() {
+            const grid = document.getElementById('facilitiesGrid');
+            grid.innerHTML = '';
+            
+            if (!currentChiefdom) return;
+            
+            const facilities = filteredFacilities.length > 0 ? filteredFacilities : (healthFacilitiesData[currentChiefdom] || []);
+            
+            if (facilities.length === 0) {
+                grid.innerHTML = '<div class="no-results">No health facilities match your search criteria.</div>';
+                return;
+            }
+            
+            facilities.forEach(facility => {
+                const facilityTypeInfo = facilityTypes[facility.type] || { color: "#8b949e", description: "Health facility" };
+                
+                const card = document.createElement('div');
+                card.className = 'facility-card fade-in';
+                card.style.cursor = 'pointer';
+                card.onclick = () => showFacilityDashboard(facility);
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-info">
+                            <div class="card-name">${facility.name}</div>
+                            <div class="card-type" style="color: ${facilityTypeInfo.color}">${facility.type}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 5px;">PHU IN-CHARGE</div>
+                        <div style="color: #e6edf3; font-weight: 600; margin-bottom: 8px;">${facility.inCharge}</div>
+                        <div style="color: #8b949e; font-size: 12px; margin-bottom: 3px;">CONTACT</div>
+                        <div style="color: #58a6ff; font-weight: 500;">${facility.contact}</div>
+                    </div>
+                    <div style="background: rgba(88, 166, 255, 0.1); padding: 8px; border-radius: 4px; border-left: 3px solid ${facilityTypeInfo.color};">
+                        <div style="color: #e6edf3; font-size: 13px;">${facilityTypeInfo.description}</div>
+                    </div>
+                    <div class="click-hint" style="margin-top: 10px;">Click to view malaria surveillance data</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize data management
+            initializeDataManagement();
+            
+            // Start with empty data - all will be loaded from Excel
+            calculateStats();
+            
+            // Show empty state message
+            const grid = document.getElementById('regionsGrid');
+            grid.innerHTML = '<div class="no-results">No data loaded. Please provide a GitHub URL to load your Excel data, or download the template to see the expected format.</div>';
+        });
+    </script>
+</body>
+</html>Districts</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalChiefdoms}</span>
+                            <span class="summary-label">
