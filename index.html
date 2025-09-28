@@ -31,10 +31,10 @@
 
         .logos {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 40px;
             margin-bottom: 30px;
+            padding: 0 20px;
         }
 
         .logo-container {
@@ -44,9 +44,8 @@
         .logo-container img {
             width: 80px;
             height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #30363d;
+            object-fit: contain;
+            border: none;
             margin-bottom: 10px;
         }
 
@@ -54,7 +53,6 @@
             width: 80px;
             height: 80px;
             background: linear-gradient(135deg, #2ea043, #58a6ff);
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -63,7 +61,7 @@
             color: white;
             font-size: 18px;
             font-weight: bold;
-            border: 3px solid #30363d;
+            border: none;
         }
 
         .logo-label {
@@ -418,7 +416,7 @@
 
         @media (max-width: 768px) {
             .logos {
-                gap: 20px;
+                padding: 0 10px;
             }
 
             .logo-container img,
@@ -452,13 +450,13 @@
             <div class="logos">
                 <div class="logo-container">
                     <!-- Replace src with your Ministry of Health logo -->
-                    <img src="NMCP.png" alt="Ministry of Health Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="mohs-logo.png" alt="Ministry of Health Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="logo-placeholder" style="display: none;">MoHS</div>
                     <div class="logo-label">Ministry of Health</div>
                 </div>
                 <div class="logo-container">
                     <!-- Replace src with your Sierra Leone logo -->
-                    <img src="ICF-SL.jpg" alt="Sierra Leone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="sierra-leone-logo.png" alt="Sierra Leone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="logo-placeholder" style="display: none; background: linear-gradient(135deg, #f85149, #ec4899);">SL</div>
                     <div class="logo-label">Sierra Leone</div>
                 </div>
@@ -1202,6 +1200,8 @@ Kenema City||Direct Aid Orphanage (Kenema City) Clinic
 Kenema City||Egyptian (Kenema City) Clinic
 Kenema City||Ensah Foundation Clinic
 Kenema City||Friends For Lives Clinic
+Kenema City||Gbo-Kakajama 1 MCHP
+Kenema City||Gbo-Kakajama 2 MCHP
 Kenema City||Gbo-Lambayama 1 CHC
 Kenema City||Gbo-Lambayama 2 MCHP
 Kenema City||Kenema City Military Clinic
@@ -2740,3 +2740,4 @@ West 3 Zone||Wilberforce CHC`;
     </script>
 </body>
 </html>
+Kenema City||G
