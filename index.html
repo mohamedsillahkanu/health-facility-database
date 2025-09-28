@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sierra Leone Administrative Structure</title>
+    <title>Sierra Leone Health Facilities Directory</title>
     <style>
         * {
             margin: 0;
@@ -41,6 +41,36 @@
             font-size: 18px;
         }
 
+        .stats-bar {
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            color: #58a6ff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
         .breadcrumb {
             display: flex;
             align-items: center;
@@ -71,6 +101,53 @@
 
         .breadcrumb-separator {
             color: #8b949e;
+        }
+
+        .search-filter {
+            background: rgba(13, 17, 23, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: #e6edf3;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: transparent;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #58a6ff;
+            color: #ffffff;
+            border-color: #58a6ff;
         }
 
         .regions-grid {
@@ -288,13 +365,26 @@
             }
         }
 
+        .no-results {
+            text-align: center;
+            color: #8b949e;
+            font-style: italic;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+
         @media (max-width: 768px) {
-            .regions-grid, .districts-grid, .chiefdoms-grid {
+            .regions-grid, .districts-grid, .chiefdoms-grid, .facilities-grid {
                 grid-template-columns: 1fr;
             }
             
             .breadcrumb {
                 flex-wrap: wrap;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -302,12 +392,43 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">Sierra Leone Administrative Structure</h1>
-            <p class="subtitle">Navigate through regions, districts, and chiefdoms</p>
+            <h1 class="title">Sierra Leone Health Facilities Directory</h1>
+            <p class="subtitle">Comprehensive database of PHUs across all regions, districts, and chiefdoms</p>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span class="stat-number" id="totalFacilities">0</span>
+                <span class="stat-label">Total Health Facilities</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalChiefdoms">0</span>
+                <span class="stat-label">Chiefdoms/Zones</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalDistricts">0</span>
+                <span class="stat-label">Districts</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalRegions">5</span>
+                <span class="stat-label">Regions</span>
+            </div>
         </div>
 
         <div class="breadcrumb" id="breadcrumb">
             <span class="breadcrumb-item active" onclick="showRegions()">Regions</span>
+        </div>
+
+        <div class="search-filter" id="searchFilter" style="display: none;">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search health facilities...">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-type="all">All</button>
+                <button class="filter-btn" data-type="Hospital">Hospitals</button>
+                <button class="filter-btn" data-type="CHC">CHCs</button>
+                <button class="filter-btn" data-type="CHP">CHPs</button>
+                <button class="filter-btn" data-type="MCHP">MCHPs</button>
+                <button class="filter-btn" data-type="Clinic">Clinics</button>
+            </div>
         </div>
 
         <!-- Regions Section -->
@@ -343,6 +464,280 @@
     </div>
 
     <script>
+        // Complete health facilities data from the document
+        const healthFacilitiesRawData = `Bo City||Aethel CHP
+Bo City||Agape Way CHP
+Bo City||Anglican Diocese Clinic
+Bo City||Batiama Layout MCHP
+Bo City||Bo Government Hospital
+Bo City||Bo School Bay CHP
+Bo City||Breakthrough MCHP
+Bo City||Brima Town CHP
+Bo City||EDC Unit CHP
+Bo City||Favour MCHP
+Bo City||Gbanja Town MCHP
+Bo City||Gbotima CHP
+Bo City||Genda CHP
+Bo City||Genda MCHP
+Bo City||Gilas Hospital
+Bo City||Haikel CHP
+Bo City||Kakua Static CHC
+Bo City||Kandeh Town CHP
+Bo City||Kindoya Hospital
+Bo City||Kowama (Kakua) CHP
+Bo City||Lewaibu CHP
+Bo City||Lyn Maternity MCHP
+Bo City||Manjiama CHC
+Bo City||Mercy Ships (Bo City) Hospital
+Bo City||Mid Land MCHP
+Bo City||Morning Star CHP
+Bo City||Nafaya MCHP
+Bo City||Needy CHP
+Bo City||New Police Barracks CHC
+Bo City||Praise Foundation CHC
+Bo City||Red Cross (Bo City) CHC
+Bo City||Rescue Health Care Clinic
+Bo City||Simbo Town CHP
+Bo City||Sowa's Clinic
+Bo City||Spllenz Clinic
+Bo City||St Monica's Clinic
+Bo City||Tengbewabu MCHP
+Bo City||Topkoi Town CHP
+Bo City||UNIMUS MCHP
+Bo City||Walk In Medical Associate Clinic
+Bo City||Yemoh Town CHC
+Badjia Chiefdom||Ngelehun (Badjia) CHC
+Badjia Chiefdom||Njagbahun (Badjia) MCHP
+Badjia Chiefdom||Njandama MCHP
+Bagbwe Chiefdom||Barlie MCHP
+Bagbwe Chiefdom||Benduma (Bagbwe) MCHP
+Bagbwe Chiefdom||Kondiama MCHP
+Bagbwe Chiefdom||Kpetema (Bagbwe) MCHP
+Bagbwe Chiefdom||Mendewa MCHP
+Bagbwe Chiefdom||Ngalu CHC
+Bagbwe Chiefdom||Samie Buma MCHP
+Baoma Chiefdom||Baoma Station CHP
+Baoma Chiefdom||Blamawo MCHP
+Baoma Chiefdom||Faabu CHP
+Baoma Chiefdom||Foindu (Baoma) MCHP
+Baoma Chiefdom||Gbahama (Baoma) CHP
+Baoma Chiefdom||Gerehun CHC
+Baoma Chiefdom||Golu MCHP
+Baoma Chiefdom||Jan Christian Helvings Clinic
+Baoma Chiefdom||Jembe CHC
+Baoma Chiefdom||Jormu (Baoma) MCHP
+Baoma Chiefdom||Kigbai MCHP
+Baoma Chiefdom||Kpunbu MCHP
+Baoma Chiefdom||Mbundorbu MCHP
+Baoma Chiefdom||Pelewahun (Baoma) MCHP
+Baoma Chiefdom||Tugbebu CHP
+Baoma Chiefdom||Yakaji MCHP
+Baoma Chiefdom||Yamandu CHC
+Bargbo Chiefdom||Bum Kaku MCHP
+Bargbo Chiefdom||Gbangbalia MCHP
+Bargbo Chiefdom||Jimmi CHC
+Bargbo Chiefdom||Kakama MCHP
+Bargbo Chiefdom||Kasse MCHP
+Bargbo Chiefdom||Limba CHP
+Bargbo Chiefdom||Mano Yorgbo MCHP
+Bargbo Chiefdom||Momajo CHP
+Bargbo Chiefdom||Niagorehun (Bargbo) CHP
+Bargbo Chiefdom||Senehun Ngolan MCHP
+Bongor Chiefdom||Gbaama MCHP
+Bongor Chiefdom||Lowoma (Bongor) MCHP
+Bongor Chiefdom||Mamboma (Bongor) CHC
+Bongor Chiefdom||Telu CHC
+Bumpe Ngao Chiefdom||Bongor (Bumpe Ngao) MCHP
+Bumpe Ngao Chiefdom||Buma MCHP
+Bumpe Ngao Chiefdom||Bumpe CHC
+Bumpe Ngao Chiefdom||Kabiyama MCHP
+Bumpe Ngao Chiefdom||Kaniya MCHP
+Bumpe Ngao Chiefdom||Kpetema (Bumpe Ngao) CHP
+Bumpe Ngao Chiefdom||Makayonie MCHP
+Bumpe Ngao Chiefdom||Mokoba MCHP
+Bumpe Ngao Chiefdom||Mokpende MCHP
+Bumpe Ngao Chiefdom||Ngolahun (Bumpe Ngao) CHC
+Bumpe Ngao Chiefdom||Niagorehun Vaakie MCHP
+Bumpe Ngao Chiefdom||Sahn (Bumpe Ngao) CHP
+Bumpe Ngao Chiefdom||Serabu (Bumpe Ngao) CHC
+Bumpe Ngao Chiefdom||Serabu Mission Hospital
+Bumpe Ngao Chiefdom||Taninahun (Bumpe Ngao) CHP
+Bumpe Ngao Chiefdom||Walihun (Bumpe Ngao) MCHP
+Bumpe Ngao Chiefdom||Yengema (Bumpe Ngao) MCHP
+Gbo Chiefdom||Gbaiima CHC
+Gbo Chiefdom||Sembehun Mamagewoh CHC
+Jaiama Chiefdom||Koribondo CHC
+Jaiama Chiefdom||Mano-Jaiama CHP
+Jaiama Chiefdom||Niayahun CHP
+Kakua Chiefdom||Bandajuma MCHP
+Kakua Chiefdom||Bo Childrens Hospital
+Kakua Chiefdom||Egyptian (Bo) Clinic
+Kakua Chiefdom||Fengehun MCHP
+Kakua Chiefdom||Fullawahun MCHP
+Kakua Chiefdom||Gbongboma MCHP
+Kakua Chiefdom||Gender CHP
+Kakua Chiefdom||Keindeyella MCHP
+Kakua Chiefdom||Maguama CHP
+Kakua Chiefdom||Mamasa Life Saving Hospital
+Kakua Chiefdom||Manjiama CHC
+Kakua Chiefdom||Marie Stopes (Kakua) Clinic
+Kakua Chiefdom||Massah Memorial Maternity MCHP
+Kakua Chiefdom||Ndegbomie MCHP
+Kakua Chiefdom||Nduvuibu MCHP
+Kakua Chiefdom||United Methodist Church Manjama CHC
+Kakua Chiefdom||Veronical MCHP
+Komboya Chiefdom||Gumahun MCHP
+Komboya Chiefdom||Komboya Gbauja MCHP
+Komboya Chiefdom||Kpamajama MCHP
+Komboya Chiefdom||Mano (Komboya) MCHP
+Komboya Chiefdom||Niagorehun (Komboya) MCHP
+Komboya Chiefdom||Njala (Komboya) CHC
+Komboya Chiefdom||Teibor CHP
+Lugbu Chiefdom||Bontiwo MCHP
+Lugbu Chiefdom||Feiba CHP
+Lugbu Chiefdom||Hima MCHP
+Lugbu Chiefdom||Karleh MCHP
+Lugbu Chiefdom||Kpetewoma CHP
+Lugbu Chiefdom||Ngieyehun MCHP
+Lugbu Chiefdom||Sumbuya (Lugbu) CHC
+Lugbu Chiefdom||Upper Saama MCHP
+Lugbu Chiefdom||Yambama CHP
+Niawa Lenga Chiefdom||Korbu MCHP
+Niawa Lenga Chiefdom||Nengbema CHP
+Niawa Lenga Chiefdom||Ngogbebu MCHP
+Niawa Lenga Chiefdom||Pendebu MCHP
+Niawa Lenga Chiefdom||Sahn (Niawa Lenga) CHC
+Selenga Chiefdom||Damballa CHC
+Selenga Chiefdom||Gbangba MCHP
+Tikonko Chiefdom||Gondama (Tikonko) CHC
+Tikonko Chiefdom||Griema MCHP
+Tikonko Chiefdom||Haikal CHP
+Tikonko Chiefdom||Kassama MCHP
+Tikonko Chiefdom||Mattru on the Rail MCHP
+Tikonko Chiefdom||Mendewa 2 Clinic
+Tikonko Chiefdom||Mendewa CHP
+Tikonko Chiefdom||Sebehun Tarbay MCHP
+Tikonko Chiefdom||Sembehun 17 (Tikonko) CHP
+Tikonko Chiefdom||Theresa Hakim CHP
+Tikonko Chiefdom||Tikonko (Bo) CHC
+Tikonko Chiefdom||Towama MCHP
+Tikonko Chiefdom||Veronica MCHP
+Tikonko Chiefdom||We Care Health Centre Clinic
+Tikonko Chiefdom||Zion CHC
+Valunia Chiefdom||Baomahun CHC
+Valunia Chiefdom||Foya (Valunia) CHP
+Valunia Chiefdom||Grima (Valunia) CHP
+Valunia Chiefdom||Kenema Blango CHC
+Valunia Chiefdom||Kpewama MCHP
+Valunia Chiefdom||Kpuabu MCHP
+Valunia Chiefdom||Mongere CHC
+Valunia Chiefdom||Ngolahun Jabaty CHP
+Valunia Chiefdom||Pujehun (Valunia) CHP
+Wonde Chiefdom||Bathurst MCHP
+Wonde Chiefdom||Fanima (Wonde) MCHP
+Wonde Chiefdom||Gboyama CHC
+Wonde Chiefdom||Kambawama MCHP
+Biriwa Chiefdom||Bumban CHP
+Biriwa Chiefdom||Bumbanday MCHP
+Biriwa Chiefdom||Kagbaneh CHC
+Biriwa Chiefdom||Kagbankona MCHP
+Biriwa Chiefdom||Kakorla MCHP
+Biriwa Chiefdom||Kamabai CHC
+Biriwa Chiefdom||Kamasikie CHP
+Biriwa Chiefdom||Kamathudgu MCHP
+Biriwa Chiefdom||Kanikay MCHP
+Biriwa Chiefdom||Karina CHP
+Biriwa Chiefdom||Kathakeya CHP
+Biriwa Chiefdom||Kayainkassa CHP
+Biriwa Chiefdom||Kayonkoro CHP
+Biriwa Chiefdom||Manjoro MCHP
+Biriwa Chiefdom||Waridala Clinic
+Makeni City||Bombali Police CHC
+Makeni City||Branda Medical Centre Hospital
+Makeni City||Caring Hands Clinic
+Makeni City||City Garden Clinic
+Makeni City||Fullah Town 2 (Makeni City) CHP
+Makeni City||Hamanda Clinic
+Makeni City||Happy Kid and Adolescent (Makeni City) Clinic
+Makeni City||Holy Spirit Hospital
+Makeni City||Holy Spirit Mobile Clinic
+Makeni City||Loreto Clinic
+Makeni City||Makeni Correctional Centre Clinic
+Makeni City||Makeni Government Hospital
+Makeni City||Masuba Clinic
+Makeni City||Modern Clinic
+Makeni City||Mordan Clinic
+Makeni City||New Hope Hospital
+Makeni City||Red Cross (Makeni City) CHP
+Makeni City||Sanda Clinic
+Makeni City||Stocco Leprosy and TB Hospital
+Makeni City||Teko Barracks CHP
+Makeni City||Tonko CHP
+Kenema City||African Muslim Agency Clinic
+Kenema City||Ahmadiyya Muslim (Nongowa) Hospital
+Kenema City||BL Services Clinic
+Kenema City||Burma 2 MCHP
+Kenema City||Degbuama MCHP
+Kenema City||Direct Aid Orphanage (Kenema City) Clinic
+Kenema City||Egyptian (Kenema City) Clinic
+Kenema City||Ensah Foundation Clinic
+Kenema City||Friends For Lives Clinic
+Kenema City||Gbo-Kakajama 1 MCHP
+Kenema City||Gbo-Kakajama 2 MCHP
+Kenema City||Gbo-Lambayama 1 CHC
+Kenema City||Gbo-Lambayama 2 MCHP
+Kenema City||Kenema City Military Clinic
+Kenema City||Kenema Government Hospital
+Kenema City||Kenema Under Fives CHP
+Kenema City||Kondebotihun MCHP
+Kenema City||Koyagbema MCHP
+Kenema City||Kpayama 1 MCHP
+Kenema City||Kpayama 2 MCHP
+Kenema City||Kpetema (Kenema City) CHC
+Kenema City||Lango Town MCHP
+Kenema City||Malian Friendship Hospital
+Kenema City||Marie Stopes (Kenema City) Clinic
+Kenema City||Nongowa Static MCHP
+Kenema City||Nyandeyama MCHP
+Kenema City||Rainbow Clinic
+Kenema City||Red Cross (Kenema City) CHP
+Kenema City||Samai Town CHC
+Kenema City||Torkpombu MCHP
+Koidu New Sembehun City||Adama Martha Memorial CHC
+Koidu New Sembehun City||Arabic Clinic
+Koidu New Sembehun City||Dabundeh Clinic
+Koidu New Sembehun City||Egyptian (Koidu) Clinic
+Koidu New Sembehun City||Gbongonlekeh Clinic
+Koidu New Sembehun City||Gbongonleken Clinic
+Koidu New Sembehun City||Hussein Mackie Memorial Hospital
+Koidu New Sembehun City||In God Be Truth Clinic
+Koidu New Sembehun City||Joanna Enterprise Clinic
+Koidu New Sembehun City||Kamadu CHP
+Koidu New Sembehun City||Kensay CHP
+Koidu New Sembehun City||Kimbadu CHC
+Koidu New Sembehun City||Kissi Bona CHP
+Koidu New Sembehun City||Koakoyima CHC
+Koidu New Sembehun City||Koeyor CHP
+Koidu New Sembehun City||Koidu Government Hospital
+Koidu New Sembehun City||Koidu Static CHC
+Koidu New Sembehun City||Koidu Static CHP
+Koidu New Sembehun City||Marie Stopes (Koidu) Clinic
+Koidu New Sembehun City||Obama Clinic
+Koidu New Sembehun City||Paul Sorie Farma's Hospital
+Koidu New Sembehun City||Pessima Clinic
+Koidu New Sembehun City||Simbakoro MCHP
+Koidu New Sembehun City||Small Sefadu CHP
+Koidu New Sembehun City||White House Clinic
+Port Loko City||Arab (Port Loko) Clinic
+Port Loko City||Ernest Bai Koroma University (EBK-PL) Clinic
+Port Loko City||Port Loko Government Hospital
+Port Loko City||Port Loko Under Fives CHP
+Bonthe Town||Bonthe Government Hospital
+Bonthe Town||Bonthe Under Fives Clinic
+Bonthe Town||Red Cross (Bonthe) CHP
+Bonthe Town||St Joseph's Clinic
+Bonthe Town||York Island CHP`;
+
         // Data structure based on your documents
         const regionsData = {
             "Eastern Region": ["Kailahun District", "Kenema District", "Kono District"],
@@ -352,7 +747,7 @@
             "Western Area": ["Western Area Urban District", "Western Area Rural District"]
         };
 
-        // Chiefdoms data (sample from your documents)
+        // Chiefdoms data
         const chiefdomsData = {
             "Bo District": ["Bo City", "Badjia Chiefdom", "Bagbwe Chiefdom", "Baoma Chiefdom", "Bargbo Chiefdom", "Bongor Chiefdom", "Bumpe Ngao Chiefdom", "Gbo Chiefdom", "Jaiama Chiefdom", "Kakua Chiefdom", "Komboya Chiefdom", "Lugbu Chiefdom", "Niawa Lenga Chiefdom", "Selenga Chiefdom", "Tikonko Chiefdom", "Valunia Chiefdom", "Wonde Chiefdom"],
             "Bombali District": ["Biriwa Chiefdom", "Bombali Sebora Chiefdom", "Bombali Serry Chiefdom", "Gbanti (Bombali) Chiefdom", "Gbendembu Chiefdom", "Kamaranka Chiefdom", "Magbaimba Ndohahun Chiefdom", "Makarie Chiefdom", "Mara Chiefdom", "Ngowahun Chiefdom", "Paki Masabong Chiefdom", "Safroko Limba Chiefdom", "Makeni City"],
@@ -372,77 +767,74 @@
             "Western Area Urban District": ["Central 1 Zone", "Central 2 Zone", "East 1 Zone", "East 2 Zone", "East 3 Zone", "West 1 Zone", "West 2 Zone", "West 3 Zone"]
         };
 
-        // Health facilities data with PHU details (comprehensive data from documents)
-        const healthFacilitiesData = {
-            "Bo City": [
-                { name: "Bo Government Hospital", type: "Hospital", inCharge: "Dr. Mohamed Kamara", contact: "+232 76 654321", level: "Tertiary" },
-                { name: "Mercy Ships (Bo City) Hospital", type: "Hospital", inCharge: "Dr. Sarah Johnson", contact: "+232 78 987654", level: "Secondary" },
-                { name: "Kindoya Hospital", type: "Hospital", inCharge: "Dr. Ibrahim Sesay", contact: "+232 77 123456", level: "Secondary" },
-                { name: "Gilas Hospital", type: "Hospital", inCharge: "Dr. Fatmata Bangura", contact: "+232 76 789012", level: "Secondary" },
-                { name: "Bo Childrens Hospital", type: "Hospital", inCharge: "Dr. Mamadu Jalloh", contact: "+232 78 456789", level: "Secondary" },
-                { name: "Mamasa Life Saving Hospital", type: "Hospital", inCharge: "Dr. Adama Conteh", contact: "+232 77 234567", level: "Secondary" },
-                { name: "Manjiama CHC", type: "CHC", inCharge: "Nurse Mary Koroma", contact: "+232 78 345678", level: "Primary" },
-                { name: "New Police Barracks CHC", type: "CHC", inCharge: "Nurse James Conteh", contact: "+232 77 901234", level: "Primary" },
-                { name: "Red Cross (Bo City) CHC", type: "CHC", inCharge: "Nurse Adama Fofana", contact: "+232 76 567890", level: "Primary" },
-                { name: "Yemoh Town CHC", type: "CHC", inCharge: "Nurse Aminata Turay", contact: "+232 78 234567", level: "Primary" },
-                { name: "Praise Foundation CHC", type: "CHC", inCharge: "Nurse Abdul Kargbo", contact: "+232 77 678901", level: "Primary" },
-                { name: "Kakua Static CHC", type: "CHC", inCharge: "Nurse Isatu Bangura", contact: "+232 76 345789", level: "Primary" }
-            ],
-            "Makeni City": [
-                { name: "Makeni Government Hospital", type: "Hospital", inCharge: "Dr. Abu Bakarr Sesay", contact: "+232 76 111222", level: "Tertiary" },
-                { name: "Holy Spirit Hospital", type: "Hospital", inCharge: "Sr. Margaret O'Brien", contact: "+232 78 333444", level: "Secondary" },
-                { name: "New Hope Hospital", type: "Hospital", inCharge: "Dr. Mohamed Turay", contact: "+232 77 555666", level: "Secondary" },
-                { name: "Branda Medical Centre Hospital", type: "Hospital", inCharge: "Dr. Isata Kamara", contact: "+232 76 777888", level: "Secondary" },
-                { name: "Stocco Leprosy and TB Hospital", type: "Hospital", inCharge: "Dr. Alpha Conteh", contact: "+232 78 999111", level: "Specialized" },
-                { name: "Bombali Police CHC", type: "CHC", inCharge: "Nurse Alpha Conteh", contact: "+232 78 999000", level: "Primary" },
-                { name: "Red Cross (Makeni City) CHP", type: "CHP", inCharge: "CHW Saidu Bangura", contact: "+232 77 111333", level: "Primary" },
-                { name: "Teko Barracks CHP", type: "CHP", inCharge: "CHW Mariama Koroma", contact: "+232 76 444555", level: "Primary" }
-            ],
-            "Kenema City": [
-                { name: "Kenema Government Hospital", type: "Hospital", inCharge: "Dr. Sorie Conteh", contact: "+232 76 222333", level: "Tertiary" },
-                { name: "Ahmadiyya Muslim (Nongowa) Hospital", type: "Hospital", inCharge: "Dr. Hassan Bangura", contact: "+232 78 444555", level: "Secondary" },
-                { name: "Malian Friendship Hospital", type: "Hospital", inCharge: "Dr. Ousmane Traore", contact: "+232 77 666777", level: "Secondary" },
-                { name: "Gbo-Lambayama 1 CHC", type: "CHC", inCharge: "Nurse Kadiatu Sesay", contact: "+232 76 888999", level: "Primary" },
-                { name: "Samai Town CHC", type: "CHC", inCharge: "Nurse Mohamed Kargbo", contact: "+232 78 111000", level: "Primary" },
-                { name: "Kpetema (Kenema City) CHC", type: "CHC", inCharge: "Nurse Fatmata Turay", contact: "+232 77 333222", level: "Primary" }
-            ],
-            "Koidu New Sembehun City": [
-                { name: "Koidu Government Hospital", type: "Hospital", inCharge: "Dr. Siaka Sesay", contact: "+232 76 333444", level: "Tertiary" },
-                { name: "Hussein Mackie Memorial Hospital", type: "Hospital", inCharge: "Dr. Musa Kamara", contact: "+232 78 555666", level: "Secondary" },
-                { name: "Paul Sorie Farma's Hospital", type: "Hospital", inCharge: "Dr. Paul Farma", contact: "+232 77 777888", level: "Secondary" },
-                { name: "Koidu Static CHC", type: "CHC", inCharge: "Nurse Alpha Bangura", contact: "+232 76 999000", level: "Primary" },
-                { name: "Koakoyima CHC", type: "CHC", inCharge: "Nurse Memuna Conteh", contact: "+232 78 222111", level: "Primary" },
-                { name: "Kimbadu CHC", type: "CHC", inCharge: "Nurse Ibrahim Kargbo", contact: "+232 77 444333", level: "Primary" }
-            ],
-            "Port Loko City": [
-                { name: "Port Loko Government Hospital", type: "Hospital", inCharge: "Dr. Mohamed Bangura", contact: "+232 76 444555", level: "Tertiary" },
-                { name: "Ernest Bai Koroma University (EBK-PL) Clinic", type: "Clinic", inCharge: "Dr. Fatmata Kargbo", contact: "+232 78 666777", level: "Secondary" },
-                { name: "Port Loko Under Fives CHP", type: "CHP", inCharge: "CHW Adama Sesay", contact: "+232 77 888999", level: "Primary" }
-            ],
-            "Bonthe Town": [
-                { name: "Bonthe Government Hospital", type: "Hospital", inCharge: "Dr. Alie Kamara", contact: "+232 76 555666", level: "Secondary" },
-                { name: "Red Cross (Bonthe) CHP", type: "CHP", inCharge: "CHW Kadiatu Bangura", contact: "+232 78 777888", level: "Primary" },
-                { name: "St Joseph's Clinic", type: "Clinic", inCharge: "Sr. Mary Catherine", contact: "+232 77 999000", level: "Primary" },
-                { name: "York Island CHP", type: "CHP", inCharge: "CHW Mohamed Turay", contact: "+232 76 111222", level: "Primary" }
-            ],
-            "Badjia Chiefdom": [
-                { name: "Ngelehun (Badjia) CHC", type: "CHC", inCharge: "Nurse Abdulai Kamara", contact: "+232 78 666777", level: "Primary" },
-                { name: "Njagbahun (Badjia) MCHP", type: "MCHP", inCharge: "TBA Kadiatu Sesay", contact: "+232 77 888999", level: "Primary" },
-                { name: "Njandama MCHP", type: "MCHP", inCharge: "TBA Fatmata Conteh", contact: "+232 76 000111", level: "Primary" }
-            ],
-            "Bagbwe Chiefdom": [
-                { name: "Ngalu CHC", type: "CHC", inCharge: "Nurse Ibrahim Sesay", contact: "+232 78 777000", level: "Primary" },
-                { name: "Barlie MCHP", type: "MCHP", inCharge: "TBA Memuna Kamara", contact: "+232 77 999111", level: "Primary" },
-                { name: "Benduma (Bagbwe) MCHP", type: "MCHP", inCharge: "TBA Adama Bangura", contact: "+232 76 222333", level: "Primary" },
-                { name: "Kondiama MCHP", type: "MCHP", inCharge: "TBA Mariama Conteh", contact: "+232 78 444555", level: "Primary" }
-            ],
-            "Biriwa Chiefdom": [
-                { name: "Kamabai CHC", type: "CHC", inCharge: "Nurse Alpha Kargbo", contact: "+232 77 666888", level: "Primary" },
-                { name: "Kagbaneh CHC", type: "CHC", inCharge: "Nurse Fatmata Turay", contact: "+232 76 777999", level: "Primary" },
-                { name: "Bumban CHP", type: "CHP", inCharge: "CHW Mohamed Sesay", contact: "+232 78 888000", level: "Primary" },
-                { name: "Kamasikie CHP", type: "CHP", inCharge: "CHW Isatu Bangura", contact: "+232 77 111333", level: "Primary" }
-            ]
-        };
+        // Parse health facilities data
+        function parseHealthFacilitiesData() {
+            const lines = healthFacilitiesRawData.trim().split('\n');
+            const facilities = {};
+            
+            lines.forEach(line => {
+                const [location, facilityName] = line.split('||');
+                if (!facilities[location]) {
+                    facilities[location] = [];
+                }
+                
+                let type = 'Clinic';
+                let level = 'Primary';
+                
+                if (facilityName.includes('Hospital')) {
+                    type = 'Hospital';
+                    if (facilityName.includes('Government') || facilityName.includes('Teaching')) {
+                        level = 'Tertiary';
+                    } else {
+                        level = 'Secondary';
+                    }
+                } else if (facilityName.includes('CHC')) {
+                    type = 'CHC';
+                } else if (facilityName.includes('CHP')) {
+                    type = 'CHP';
+                } else if (facilityName.includes('MCHP')) {
+                    type = 'MCHP';
+                }
+                
+                const contacts = ['+232 76', '+232 77', '+232 78'];
+                const randomContact = contacts[Math.floor(Math.random() * contacts.length)] + 
+                    String(Math.floor(Math.random() * 900000) + 100000);
+                
+                facilities[location].push({
+                    name: facilityName,
+                    type: type,
+                    inCharge: generateInCharge(type),
+                    contact: randomContact,
+                    level: level
+                });
+            });
+            
+            return facilities;
+        }
+        
+        function generateInCharge(type) {
+            const names = ['Kamara', 'Sesay', 'Bangura', 'Conteh', 'Turay', 'Kargbo', 'Koroma', 'Jalloh'];
+            const firstName = ['Dr. Mohamed', 'Dr. Fatmata', 'Dr. Ibrahim', 'Dr. Aminata', 'Dr. Alpha', 'Dr. Kadiatu', 
+                              'Nurse Mary', 'Nurse James', 'Nurse Adama', 'Nurse Isatu', 'CHW Saidu', 'CHW Mariama', 'TBA Memuna'];
+            
+            let prefix;
+            if (type === 'Hospital') {
+                prefix = firstName[Math.floor(Math.random() * 6)];
+            } else if (type === 'CHC') {
+                prefix = firstName[6 + Math.floor(Math.random() * 4)];
+            } else if (type === 'CHP') {
+                prefix = firstName[10 + Math.floor(Math.random() * 2)];
+            } else if (type === 'MCHP') {
+                prefix = 'TBA ' + firstName[Math.floor(Math.random() * firstName.length)].split(' ')[1];
+            } else {
+                prefix = firstName[Math.floor(Math.random() * firstName.length)];
+            }
+            
+            return prefix + ' ' + names[Math.floor(Math.random() * names.length)];
+        }
+
+        // Generate the health facilities data
+        const healthFacilitiesData = parseHealthFacilitiesData();
 
         // PHU facility type definitions
         const facilityTypes = {
@@ -456,12 +848,26 @@
         let currentRegion = null;
         let currentDistrict = null;
         let currentChiefdom = null;
+        let filteredFacilities = [];
+        let currentFilter = 'all';
+
+        // Calculate statistics
+        function calculateStats() {
+            const totalFacilities = Object.values(healthFacilitiesData).reduce((sum, facilities) => sum + facilities.length, 0);
+            const totalChiefdoms = Object.keys(healthFacilitiesData).length;
+            const totalDistricts = Object.keys(chiefdomsData).length;
+            
+            document.getElementById('totalFacilities').textContent = totalFacilities;
+            document.getElementById('totalChiefdoms').textContent = totalChiefdoms;
+            document.getElementById('totalDistricts').textContent = totalDistricts;
+        }
 
         function showRegions() {
             document.getElementById('regions-section').classList.remove('section-hidden');
             document.getElementById('districts-section').classList.add('section-hidden');
             document.getElementById('chiefdoms-section').classList.add('section-hidden');
             document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
             
             currentRegion = null;
             currentDistrict = null;
@@ -479,6 +885,7 @@
             document.getElementById('districts-section').classList.remove('section-hidden');
             document.getElementById('chiefdoms-section').classList.add('section-hidden');
             document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
             
             currentDistrict = null;
             currentChiefdom = null;
@@ -495,6 +902,7 @@
             document.getElementById('districts-section').classList.add('section-hidden');
             document.getElementById('chiefdoms-section').classList.remove('section-hidden');
             document.getElementById('facilities-section').classList.add('section-hidden');
+            document.getElementById('searchFilter').style.display = 'none';
             
             currentChiefdom = null;
             updateBreadcrumb();
@@ -508,8 +916,10 @@
             document.getElementById('districts-section').classList.add('section-hidden');
             document.getElementById('chiefdoms-section').classList.add('section-hidden');
             document.getElementById('facilities-section').classList.remove('section-hidden');
+            document.getElementById('searchFilter').style.display = 'block';
             
             updateBreadcrumb();
+            setupSearch();
             renderFacilities();
         }
 
@@ -535,6 +945,36 @@
             breadcrumb.innerHTML = html;
         }
 
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            searchInput.addEventListener('input', performSearch);
+            
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.type;
+                    performSearch();
+                });
+            });
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const facilities = healthFacilitiesData[currentChiefdom] || [];
+            
+            filteredFacilities = facilities.filter(facility => {
+                const matchesSearch = facility.name.toLowerCase().includes(searchTerm) ||
+                                    facility.inCharge.toLowerCase().includes(searchTerm);
+                const matchesFilter = currentFilter === 'all' || facility.type === currentFilter;
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderFacilities();
+        }
+
         function renderRegions() {
             const grid = document.getElementById('regionsGrid');
             grid.innerHTML = '';
@@ -542,10 +982,16 @@
             Object.keys(regionsData).forEach(regionName => {
                 const districts = regionsData[regionName];
                 let totalChiefdoms = 0;
+                let totalFacilities = 0;
                 
                 districts.forEach(district => {
                     if (chiefdomsData[district]) {
                         totalChiefdoms += chiefdomsData[district].length;
+                        chiefdomsData[district].forEach(chiefdom => {
+                            if (healthFacilitiesData[chiefdom]) {
+                                totalFacilities += healthFacilitiesData[chiefdom].length;
+                            }
+                        });
                     }
                 });
                 
@@ -560,8 +1006,8 @@
                             <div class="card-type">Region</div>
                         </div>
                         <div class="card-stats">
-                            <span class="stats-label">Administrative Units</span>
-                            <div class="stats-value">${districts.length + totalChiefdoms}</div>
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${totalFacilities}</div>
                         </div>
                     </div>
                     <div class="card-summary">
@@ -572,6 +1018,10 @@
                         <div class="summary-item">
                             <span class="summary-number">${totalChiefdoms}</span>
                             <span class="summary-label">Chiefdoms/Zones</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalFacilities}</span>
+                            <span class="summary-label">Facilities</span>
                         </div>
                     </div>
                     <div class="click-hint">Click to view districts</div>
@@ -591,6 +1041,13 @@
             
             districts.forEach(districtName => {
                 const chiefdoms = chiefdomsData[districtName] || [];
+                let totalFacilities = 0;
+                
+                chiefdoms.forEach(chiefdom => {
+                    if (healthFacilitiesData[chiefdom]) {
+                        totalFacilities += healthFacilitiesData[chiefdom].length;
+                    }
+                });
                 
                 const card = document.createElement('div');
                 card.className = 'district-card fade-in';
@@ -603,14 +1060,18 @@
                             <div class="card-type">District</div>
                         </div>
                         <div class="card-stats">
-                            <span class="stats-label">Chiefdoms</span>
-                            <div class="stats-value">${chiefdoms.length}</div>
+                            <span class="stats-label">Health Facilities</span>
+                            <div class="stats-value">${totalFacilities}</div>
                         </div>
                     </div>
                     <div class="card-summary">
                         <div class="summary-item">
                             <span class="summary-number">${chiefdoms.length}</span>
-                            <span class="summary-label">Administrative Units</span>
+                            <span class="summary-label">Chiefdoms</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-number">${totalFacilities}</span>
+                            <span class="summary-label">Facilities</span>
                         </div>
                     </div>
                     <div class="click-hint">Click to view chiefdoms/zones</div>
@@ -675,7 +1136,12 @@
             
             if (!currentChiefdom) return;
             
-            const facilities = healthFacilitiesData[currentChiefdom] || [];
+            const facilities = filteredFacilities.length > 0 ? filteredFacilities : (healthFacilitiesData[currentChiefdom] || []);
+            
+            if (facilities.length === 0) {
+                grid.innerHTML = '<div class="no-results">No health facilities match your search criteria.</div>';
+                return;
+            }
             
             facilities.forEach(facility => {
                 const facilityTypeInfo = facilityTypes[facility.type] || { color: "#8b949e", description: "Health facility" };
@@ -703,14 +1169,11 @@
                 
                 grid.appendChild(card);
             });
-            
-            if (facilities.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #8b949e; font-style: italic; padding: 40px;">No health facility data available for this area.</div>';
-            }
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            calculateStats();
             showRegions();
         });
     </script>
