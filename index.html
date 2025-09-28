@@ -29,6 +29,49 @@
             margin-bottom: 40px;
         }
 
+        .logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            text-align: center;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #30363d;
+            margin-bottom: 10px;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2ea043, #58a6ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid #30363d;
+        }
+
+        .logo-label {
+            color: #8b949e;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         .title {
             font-size: 32px;
             font-weight: 700;
@@ -374,6 +417,20 @@
         }
 
         @media (max-width: 768px) {
+            .logos {
+                gap: 20px;
+            }
+
+            .logo-container img,
+            .logo-placeholder {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-placeholder {
+                font-size: 14px;
+            }
+
             .regions-grid, .districts-grid, .chiefdoms-grid, .facilities-grid {
                 grid-template-columns: 1fr;
             }
@@ -392,6 +449,20 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="logos">
+                <div class="logo-container">
+                    <!-- Replace src with your Ministry of Health logo -->
+                    <img src="mohs-logo.png" alt="Ministry of Health Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display: none;">MoHS</div>
+                    <div class="logo-label">Ministry of Health</div>
+                </div>
+                <div class="logo-container">
+                    <!-- Replace src with your Sierra Leone logo -->
+                    <img src="sierra-leone-logo.png" alt="Sierra Leone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-placeholder" style="display: none; background: linear-gradient(135deg, #f85149, #ec4899);">SL</div>
+                    <div class="logo-label">Sierra Leone</div>
+                </div>
+            </div>
             <h1 class="title">Sierra Leone Health Facilities Directory</h1>
             <p class="subtitle">Comprehensive database of PHUs across all regions, districts, and chiefdoms</p>
         </div>
@@ -1131,8 +1202,6 @@ Kenema City||Direct Aid Orphanage (Kenema City) Clinic
 Kenema City||Egyptian (Kenema City) Clinic
 Kenema City||Ensah Foundation Clinic
 Kenema City||Friends For Lives Clinic
-Kenema City||Gbo-Kakajama 1 MCHP
-Kenema City||Gbo-Kakajama 2 MCHP
 Kenema City||Gbo-Lambayama 1 CHC
 Kenema City||Gbo-Lambayama 2 MCHP
 Kenema City||Kenema City Military Clinic
@@ -2278,15 +2347,9 @@ West 3 Zone||Wilberforce CHC`;
                 }
                 
                 let type = 'Clinic';
-                let level = 'Primary';
                 
                 if (facilityName.includes('Hospital')) {
                     type = 'Hospital';
-                    if (facilityName.includes('Government') || facilityName.includes('Teaching')) {
-                        level = 'Tertiary';
-                    } else {
-                        level = 'Secondary';
-                    }
                 } else if (facilityName.includes('CHC')) {
                     type = 'CHC';
                 } else if (facilityName.includes('CHP')) {
@@ -2303,8 +2366,7 @@ West 3 Zone||Wilberforce CHC`;
                     name: facilityName,
                     type: type,
                     inCharge: generateInCharge(type),
-                    contact: randomContact,
-                    level: level
+                    contact: randomContact
                 });
             });
             
@@ -2652,7 +2714,7 @@ West 3 Zone||Wilberforce CHC`;
                     <div class="card-header">
                         <div class="card-info">
                             <div class="card-name">${facility.name}</div>
-                            <div class="card-type" style="color: ${facilityTypeInfo.color}">${facility.type} - ${facility.level}</div>
+                            <div class="card-type" style="color: ${facilityTypeInfo.color}">${facility.type}</div>
                         </div>
                     </div>
                     <div style="margin-bottom: 15px;">
